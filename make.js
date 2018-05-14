@@ -13,7 +13,7 @@ const vfs = require('substance-bundler/extensions/vfs')
 const COMMON_SETTINGS = (custom) => { return merge({
   // paramaters that are passed to the rollup-commonjs-plugin
   commonjs: {
-    namedExports: { 'acorn/dist/walk.js': [ 'simple', 'base' ] }
+    namedExports: { 'acorn/dist/walk.js': [ 'simple', 'base', 'ancestor' ] }
   }
 }, custom)}
 

@@ -1,11 +1,12 @@
 import { parse } from 'acorn'
-import { simple, base } from 'acorn/dist/walk'
-import { generate } from 'astring/src/astring'
-import { isFunction, isNil } from 'substance'
+import { ancestor as ancestorWalk } from 'acorn/dist/walk'
+import { generate as generateCode } from 'astring/src/astring'
+import { isFunction, isNil, last } from 'substance'
 
 import Context from './Context'
-
 import libcore from 'stencila-libcore'
+
+const SEMICOLON = ';'.charCodeAt(0)
 
 /**
  * A Javascript context
@@ -22,8 +23,10 @@ export default class JsContext extends Context {
     // Global variable names that should be ignored when determining code input during `analyseCode()`
     this._globals = [
       // A list of ES6 globals obtained using:
-      //   const globals = require('globals')
-      //   JSON.stringify(Object.keys(globals.es6))
+      // ```
+      // const globals = require('globals')
+      // JSON.stringify(Object.keys(globals.es6))
+      // ```
       "Array","ArrayBuffer","Boolean","constructor","DataView","Date","decodeURI","decodeURIComponent",
       "encodeURI","encodeURIComponent","Error","escape","eval","EvalError","Float32Array","Float64Array",
       "Function","hasOwnProperty","Infinity","Int16Array","Int32Array","Int8Array","isFinite","isNaN",
@@ -55,11 +58,11 @@ export default class JsContext extends Context {
    *
    * @override
    */
-  _analyseCode (code, exprOnly = false, valueExpr = false) {
+  _analyseCode (code, exprOnly = false) {
     let inputs = []
     let output = null
-    let value = null
     let messages = []
+    let valueExpr
 
     // Parse the code
     let ast
@@ -68,64 +71,28 @@ export default class JsContext extends Context {
     } catch (error) {
       messages.push(this._packError(error))
     }
-
+    // simple expressions (such as in Sheet cells)
     if (messages.length === 0 && exprOnly) {
-      // Check for single expression only
-      let fail = false
-      if (ast.body.length > 1) fail = true
-      let first = ast.body[0]
-      if (!fail && first) {
-        let simpleExpr = false
-        if (first.type === 'ExpressionStatement') {
-          // Only allow simple expressions
-          // See http://esprima.readthedocs.io/en/latest/syntax-tree-format.html#expressions-and-patterns
-          // for a list of expression types
-          let dissallowed = ['AssignmentExpression', 'UpdateExpression', 'AwaitExpression', 'Super']
-          if (dissallowed.indexOf(first.expression.type) < 0) {
-            simpleExpr = true
-          }
-        }
-        fail = !simpleExpr
+      if (!_isSimpleExpression(ast)) {
+        messages.push(this._packError(new Error ('Code is not a single, simple expression')))
       }
-      if (fail) messages.push(this._packError(new Error ('Code is not a single, simple expression')))
     }
-
+    // dependency analysis
     if (messages.length === 0) {
-      // Determine which names are declared and which are used
-      let declared = []
-      simple(ast, {
-        VariableDeclarator: node => {
-          declared.push(node.id.name)
-        },
-        Identifier: node => {
-          let name = node.name
-          if (declared.indexOf(name) < 0 && this._globals.indexOf(name) < 0) inputs.push(name)
-        }
-      }, base)
-
-      // If the last top level node in the AST is a VariableDeclaration or Identifier then use
-      // the variable name as the output name
-      let last = ast.body.pop()
-      if (last) {
-        if (last.type === 'VariableDeclaration') {
-          output = last.declarations[0].id.name
-          value = output
-        } else if (last.type === 'ExpressionStatement') {
-          if(last.expression.type === 'Identifier') {
-            output = last.expression.name
-          }
-          value = generate(last)
-          if (value.slice(-1) === ';') value = value.slice(0, -1)
-        }
-      }
+      // Note: assumingFthat all variables used as globals are inputs
+      let deps = findGlobals()
+      inputs = deps.map(g => g.name)
     }
-
+    // output value extraction
+    if (messages.length === 0) {
+      ([output, valueExpr] = _extractOutput(ast))
+    }
     let result = {
       inputs,
       output,
-      messages
+      messages,
+      valueExpr
     }
-    if (valueExpr) result.value = value
     return Promise.resolve(result)
   }
 
@@ -138,7 +105,7 @@ export default class JsContext extends Context {
     return this._analyseCode(code, exprOnly, true).then(codeAnalysis => {
       let inputNames = codeAnalysis.inputs
       let outputName = codeAnalysis.output
-      let valueExpr = codeAnalysis.value
+      let valueExpr = codeAnalysis.valueExpr
       let value
       let messages = codeAnalysis.messages
       let stdout = ''
@@ -324,5 +291,213 @@ export default class JsContext extends Context {
       message: message
     }
   }
+}
 
+
+// helpers
+
+function _isSimpleExpression(ast) {
+  if (ast.body.length === 0) return true
+  if (ast.body.length > 1) return false
+  let node = ast.body[0]
+  if (node.type === 'ExpressionStatement') {
+    // Only allow simple expressions
+    // See http://esprima.readthedocs.io/en/latest/syntax-tree-format.html#expressions-and-patterns
+    // for a list of expression types
+    let dissallowed = ['AssignmentExpression', 'UpdateExpression', 'AwaitExpression', 'Super']
+    return (dissallowed.indexOf(node.expression.type) < 0)
+  }
+  // otherwise
+  return false
+}
+
+function _extractOutput(ast) {
+  // If the last top level node in the AST is a VariableDeclaration or Identifier then use
+  // the variable name as the output name
+  let node = last(ast.body)
+  let output, valueExpr
+  if (node) {
+    if (node.type === 'VariableDeclaration') {
+      output = node.declarations[0].id.name
+      valueExpr = output
+    } else if (node.type === 'ExpressionStatement') {
+      if(node.expression.type === 'Identifier') {
+        output = node.expression.name
+      }
+      valueExpr = generateCode(node)
+      if (valueExpr.charCodeAt(valueExpr.length-1) === SEMICOLON) {
+        valueExpr = valueExpr.slice(0, -1)
+      }
+    }
+  }
+  return [output, valueExpr]
+}
+
+function findGlobals(source, options) {
+  options = options || {}
+  let globals = []
+  let ast
+  // istanbul ignore else
+  if (typeof source === 'string') {
+    ast = _parse(source, options);
+  } else {
+    ast = source;
+  }
+  if (!(ast && typeof ast === 'object' && ast.type === 'Program')) {
+    throw new TypeError('Source must be either a string of JavaScript or an acorn AST');
+  }
+  ancestorWalk(ast, {
+    'VariableDeclaration': function (node, parents) {
+      let parent = null;
+      for (let i = parents.length - 1; i >= 0 && parent === null; i--) {
+        if (node.kind === 'var' ? _isScope(parents[i]) : _isBlockScope(parents[i])) {
+          parent = parents[i];
+        }
+      }
+      parent.locals = parent.locals || {};
+      node.declarations.forEach(function (declaration) {
+        _declarePattern(declaration.id, parent);
+      });
+    },
+    'FunctionDeclaration': function (node, parents) {
+      let parent = null;
+      for (let i = parents.length - 2; i >= 0 && parent === null; i--) {
+        if (_isScope(parents[i])) {
+          parent = parents[i];
+        }
+      }
+      parent.locals = parent.locals || {};
+      parent.locals[node.id.name] = true;
+      _declareFunction(node);
+    },
+    'Function': _declareFunction,
+    'ClassDeclaration': function (node, parents) {
+      let parent = null;
+      for (let i = parents.length - 2; i >= 0 && parent === null; i--) {
+        if (_isScope(parents[i])) {
+          parent = parents[i];
+        }
+      }
+      parent.locals = parent.locals || {};
+      parent.locals[node.id.name] = true;
+    },
+    'TryStatement': function (node) {
+      if (node.handler === null) return;
+      node.handler.locals = node.handler.locals || {};
+      node.handler.locals[node.handler.param.name] = true;
+    },
+    'ImportDefaultSpecifier': _declareModuleSpecifier,
+    'ImportSpecifier': _declareModuleSpecifier,
+    'ImportNamespaceSpecifier': _declareModuleSpecifier
+  })
+
+  function _identifier(node, parents) {
+    var name = node.name;
+    if (name === 'undefined') return;
+    for (var i = 0; i < parents.length; i++) {
+      if (name === 'arguments' && _declaresArguments(parents[i])) {
+        return;
+      }
+      if (parents[i].locals && name in parents[i].locals) {
+        return;
+      }
+    }
+    node.parents = parents;
+    globals.push(node);
+  }
+  ancestorWalk(ast, {
+    'VariablePattern': _identifier,
+    'Identifier': _identifier,
+    'ThisExpression': function (node, parents) {
+      for (var i = 0; i < parents.length; i++) {
+        if (_declaresThis(parents[i])) {
+          return;
+        }
+      }
+      node.parents = parents
+      globals.push(node)
+    }
+  })
+  let groupedGlobals = {}
+  globals.forEach(function (node) {
+    var name = node.type === 'ThisExpression' ? 'this' : node.name;
+    groupedGlobals[name] = (groupedGlobals[name] || []);
+    groupedGlobals[name].push(node);
+  });
+  return Object.keys(groupedGlobals).sort().map(function (name) {
+    return {
+      name,
+      nodes: groupedGlobals[name]
+    }
+  })
+}
+
+
+function _isScope(node) {
+  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration' || node.type === 'ArrowFunctionExpression' || node.type === 'Program';
+}
+
+function _isBlockScope(node) {
+  return node.type === 'BlockStatement' || _isScope(node);
+}
+
+function _declaresArguments(node) {
+  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration';
+}
+
+function _declaresThis(node) {
+  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration';
+}
+function _parse(source, options) {
+  let parseOptions = Object.assign({}, options,
+    {
+      allowReturnOutsideFunction: true,
+      allowImportExportEverywhere: true,
+      allowHashBang: true
+    }
+  )
+  return parse(source, parseOptions)
+}
+
+function _declareFunction(node) {
+  let fn = node;
+  fn.locals = fn.locals || {};
+  node.params.forEach(function (node) {
+    _declarePattern(node, fn);
+  });
+  if (node.id) {
+    fn.locals[node.id.name] = true;
+  }
+}
+
+function _declarePattern(node, parent) {
+  switch (node.type) {
+    case 'Identifier':
+      parent.locals[node.name] = true;
+      break;
+    case 'ObjectPattern':
+      node.properties.forEach(function (node) {
+        _declarePattern(node.value, parent);
+      });
+      break;
+    case 'ArrayPattern':
+      node.elements.forEach(function (node) {
+        if (node) _declarePattern(node, parent);
+      });
+      break;
+    case 'RestElement':
+      _declarePattern(node.argument, parent);
+      break;
+    case 'AssignmentPattern':
+      _declarePattern(node.left, parent);
+      break;
+    // istanbul ignore next
+    default:
+      throw new Error('Unrecognized pattern type: ' + node.type);
+  }
+}
+
+function _declareModuleSpecifier(ast, node) {
+  ast.locals = ast.locals || {};
+  ast.locals[node.local.name] = true;
 }
