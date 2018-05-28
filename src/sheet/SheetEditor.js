@@ -1,16 +1,17 @@
 import {
   platform, DefaultDOMElement, AbstractEditor,
   Toolbar, EditorSession, DOMSelection,
-  Configurator
+  Configurator, tableHelpers
 } from 'substance'
 import FormulaBar from './FormulaBar'
 import FormulaEditor from './FormulaEditor'
 import FunctionUsageCommand from '../shared/FunctionUsageCommand'
 import FunctionUsageTool from '../shared/FunctionUsageTool'
 import CodeEditorPackage from '../shared/CodeEditorPackage'
-import { getCellLabel } from './sheetHelpers'
-import { getRowCol, getCellState, isExpression} from '../shared/cellHelpers'
+import { getCellState, isExpression } from '../shared/cellHelpers'
 import CellRangesOverlay from './CellRangesOverlay'
+
+const { getRowCol, getCellLabel } = tableHelpers
 
 export default class SheetEditor extends AbstractEditor {
 

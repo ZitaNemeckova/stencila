@@ -1,5 +1,6 @@
 import { DefaultDOMElement, NodeComponent, Tooltip } from 'substance'
-import { getColumnLabel } from './sheetHelpers'
+import { engineHelpers } from 'stenila-engine'
+
 const DEFAULT_COLUMN_WIDTH = 100
 
 class SheetColumnHeader extends NodeComponent {
@@ -24,7 +25,7 @@ class SheetColumnHeader extends NodeComponent {
       .addClass('sc-column-header')
 
     let columnHeader = $$('div').addClass('se-column-title').append(
-      $$('div').addClass('se-column-label').text(getColumnLabel(colIdx)),
+      $$('div').addClass('se-column-label').text(engineHelpers.getColumnLabel(colIdx)),
       this.renderColumnName($$),
       this.renderColumnType($$)
     )

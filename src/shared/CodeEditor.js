@@ -3,7 +3,6 @@ import {
 } from 'substance'
 
 import analyseCode from './analyseCode'
-import { getSyntaxTokens } from '../shared/expressionHelpers'
 
 export default class CodeEditor extends Component {
 
@@ -157,4 +156,21 @@ export default class CodeEditor extends Component {
     const lastNL = head.lastIndexOf('\n')
     return head.slice(lastNL+1)
   }
+}
+
+function getSyntaxTokens (path, tokens) {
+  return tokens ? tokens.map((t) => {
+    return {
+      type: 'code-highlight',
+      name: _getTokenType(t),
+      start: { path, offset: t.start },
+      end: { path, offset: t.end },
+      on () {},
+      off () {}
+    }
+  }) : []
+}
+
+function _getTokenType (t) {
+  return t.type
 }

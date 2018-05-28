@@ -1,5 +1,6 @@
 import { uuid, DocumentChange } from 'substance'
-import { qualifiedId, setSource } from './cellHelpers'
+import { engineHelpers } from 'stencila-engine'
+import { setSource } from './cellHelpers'
 
 /*
   Base-Class for adapters between document and engine.
@@ -80,7 +81,7 @@ export class DocumentAdapter {
 
 export function getQualifiedId(node) {
   if (!node._qualifiedId) {
-    node._qualifiedId = qualifiedId(node.getDocument(), node)
+    node._qualifiedId = engineHelpers.qualifiedId(node.getDocument(), node)
   }
   return node._qualifiedId
 }
