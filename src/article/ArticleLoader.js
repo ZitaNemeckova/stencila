@@ -3,7 +3,7 @@ import { TextureConfigurator, JATSImporter } from 'substance-texture'
 import ArticleEditorPackage from './ArticleEditorPackage'
 
 export default {
-  load(xml, context) {
+  load (xml, context) {
     let configurator = new TextureConfigurator()
     // TODO: it would make more sense to use a more generic configuration here (TextureJATSPackage)
     // But ATM EditorSession is owning all the managers. So we have to use the EditorPackage.

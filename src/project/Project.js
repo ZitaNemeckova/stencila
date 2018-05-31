@@ -6,15 +6,14 @@ import ContextPane from './ContextPane'
 import { addNewDocument } from './ProjectManipulations'
 
 export default class Project extends Component {
-
-  constructor(...args) {
+  constructor (...args) {
     super(...args)
 
     // Store the viewports, so we can restore scroll positions
     this._viewports = {}
   }
 
-  didMount() {
+  didMount () {
     this.handleActions({
       'addDocument': this._addDocument,
       'openDocument': this._openDocument,
@@ -32,25 +31,25 @@ export default class Project extends Component {
     }
   }
 
-  willUpdateState() {
+  willUpdateState () {
     let oldDocumentId = this.state.documentId
     this._viewports[oldDocumentId] = this.refs.editor.getViewport()
   }
 
-  _dispose() {
+  _dispose () {
     if (platform.inBrowser) {
       this.documentEl.off(this)
     }
   }
 
-  getInitialState() {
+  getInitialState () {
     let activeDocument = this._getActiveDocument()
     return {
       documentId: activeDocument.id
     }
   }
 
-  getChildContext() {
+  getChildContext () {
     let pubMetaDbSession = this._getPubMetaDbSession()
     return {
       documentArchive: this.props.documentArchive,
@@ -59,7 +58,7 @@ export default class Project extends Component {
     }
   }
 
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-project')
     el.append(
       $$('div').addClass('se-main-pane').append(
@@ -78,32 +77,32 @@ export default class Project extends Component {
     return el
   }
 
-  _getPubMetaDbSession() {
+  _getPubMetaDbSession () {
     return this._getDocumentArchive().getEditorSession('pub-meta')
   }
 
-  _getActiveDocument() {
+  _getActiveDocument () {
     let archive = this._getDocumentArchive()
     let firstEntry = archive.getDocumentEntries()[0]
     return firstEntry
   }
 
-  _getActiveEditorSession() {
+  _getActiveEditorSession () {
     let documentId = this.state.documentId
     return this.props.documentArchive.getEditorSession(documentId)
   }
 
-  _getDocumentArchive() {
+  _getDocumentArchive () {
     return this.props.documentArchive
   }
 
-  _getDocumentRecordById(id) {
+  _getDocumentRecordById (id) {
     let dc = this._getDocumentArchive()
     let entries = dc.getDocumentEntries()
     return entries.find(e => e.id === id)
   }
 
-  _renderEditorPane($$) {
+  _renderEditorPane ($$) {
     let el = $$('div').addClass('se-editor-pane')
     let documentId = this.state.documentId
     let documentRecord = this._getDocumentRecordById(documentId)
@@ -132,25 +131,25 @@ export default class Project extends Component {
     return el
   }
 
-  _addDocument(type) {
+  _addDocument (type) {
     let archive = this._getDocumentArchive()
     let newDocumentId = addNewDocument(archive, type)
     this._openDocument(newDocumentId)
   }
 
-  _openDocument(documentId) {
+  _openDocument (documentId) {
     this.extendState({
       documentId: documentId
     })
   }
 
-  _updateDocumentName(documentId, name) { // eslint-disable-line no-unused-vars
+  _updateDocumentName (documentId, name) { // eslint-disable-line no-unused-vars
     let archive = this._getDocumentArchive()
     archive.renameDocument(documentId, name)
     this.refs.projectBar.rerender()
   }
 
-  _removeDocument(documentId) { // eslint-disable-line no-unused-vars
+  _removeDocument (documentId) { // eslint-disable-line no-unused-vars
     let archive = this._getDocumentArchive()
     let documentEntries = archive.getDocumentEntries()
     if (documentEntries.length > 1) {
@@ -167,7 +166,7 @@ export default class Project extends Component {
   /*
     E.g. _openHelp('function/sum')
   */
-  _openHelp(page) {
+  _openHelp (page) {
     this._contextId = 'help'
     this._contextProps = { page }
     this.refs.contextPane.extendProps({
@@ -179,7 +178,7 @@ export default class Project extends Component {
     })
   }
 
-  _closeContext() {
+  _closeContext () {
     this._contextId = undefined
     this._contextProps = undefined
     this.refs.contextPane.extendProps({
@@ -194,7 +193,7 @@ export default class Project extends Component {
   /*
     Either hide help or show function index
   */
-  _toggleHelp() {
+  _toggleHelp () {
     let contextId = this._contextId
     if (contextId === 'help') {
       this._contextId = undefined
@@ -215,7 +214,7 @@ export default class Project extends Component {
   /*
     Either open or hide hosts connection information
   */
-  _toggleHosts() {
+  _toggleHosts () {
     let contextId = this._contextId
     if (contextId === 'hosts') {
       this._contextId = undefined
@@ -234,13 +233,12 @@ export default class Project extends Component {
     })
   }
 
-  onKeyDown(event) {
+  onKeyDown (event) {
     // ignore fake IME events (emitted in IE and Chromium)
-    if ( event.key === 'Dead' ) return
+    if (event.key === 'Dead') return
     // Handle custom keyboard shortcuts globally
     let editorSession = this._getActiveEditorSession()
     let custom = editorSession.keyboardManager.onKeydown(event)
     return custom
   }
-
 }

@@ -5,8 +5,7 @@ import { Component } from 'substance'
   which would be positioned relative to a SheetComponent.
 */
 export default class CellRangesOverlay extends Component {
-
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-cell-ranges-overlay')
     // Note: this is already anticipating a scenario with multiple ranges
     // rendered at one time
@@ -19,5 +18,4 @@ export default class CellRangesOverlay extends Component {
     }
     return el
   }
-
 }

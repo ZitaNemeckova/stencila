@@ -5,8 +5,7 @@ import ContextToggle from './ContextToggle'
 import documentTypes from '../documentTypes'
 
 export default class ProjectBar extends Component {
-
-  render($$) {
+  render ($$) {
     const archive = this.props.archive
     const documentEntries = archive.getDocumentEntries()
     let contextId = this.props.contextId
@@ -51,9 +50,8 @@ export default class ProjectBar extends Component {
 
     return el
   }
-
 }
 
-function _isVisible(entry) {
+function _isVisible (entry) {
   return Boolean(documentTypes[entry.type])
 }

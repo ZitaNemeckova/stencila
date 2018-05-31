@@ -7,12 +7,11 @@ import { setValues, clearValues } from './SheetManipulations'
 const { getRangeFromMatrix } = tableHelpers
 
 export default class SheetClipboard {
-
-  constructor(editorSession) {
+  constructor (editorSession) {
     this.editorSession = editorSession
   }
 
-  onCopy(e) {
+  onCopy (e) {
     e.preventDefault()
     e.stopPropagation()
     if (e.clipboardData) {
@@ -22,19 +21,19 @@ export default class SheetClipboard {
         e.clipboardData.setData('text/plain', data.text)
         try {
           e.clipboardData.setData('text/html', data.html)
-        } catch(err) {
+        } catch (err) {
           // fails under some browsers
         }
       }
     }
   }
 
-  onCut(e) {
+  onCut (e) {
     this.onCopy(e)
     this._cut()
   }
 
-  onPaste(event) {
+  onPaste (event) {
     let clipboardData = event.clipboardData
     let types = {}
     for (let i = 0; i < clipboardData.types.length; i++) {
@@ -65,7 +64,7 @@ export default class SheetClipboard {
     }
   }
 
-  _pasteHtml(html, plainText) {
+  _pasteHtml (html, plainText) {
     let vals = this._htmlToVals(html)
     if (vals && vals.length > 0) {
       let { startRow, startCol } = this._getRange()
@@ -75,7 +74,7 @@ export default class SheetClipboard {
     }
   }
 
-  _pastePlainText(plainText) {
+  _pastePlainText (plainText) {
     let sel = this._getSelection()
     if (!sel) return
     const rowIdx = sel.anchorRow
@@ -98,15 +97,15 @@ export default class SheetClipboard {
     })
   }
 
-  _getSelection() {
+  _getSelection () {
     return getSelection(this.editorSession)
   }
 
-  _getRange() {
+  _getRange () {
     return getRange(this.editorSession)
   }
 
-  _copy() {
+  _copy () {
     const sheet = this.editorSession.getDocument()
     const range = this._getRange()
     if (!range) return null
@@ -121,13 +120,13 @@ export default class SheetClipboard {
     return { text, html }
   }
 
-  _cut() {
+  _cut () {
     const range = this._getRange()
     if (!range) return
     clearValues(this.editorSession, range.startRow, range.startCol, range.endRow, range.endCol)
   }
 
-  _valsToHTML(vals) {
+  _valsToHTML (vals) {
     let bodyHTML = vals.map((rowVals) => {
       const rowHTML = rowVals.map((val) => {
         return `<td>${val}</td>`
@@ -137,13 +136,13 @@ export default class SheetClipboard {
     return `<table>${bodyHTML}</table>`
   }
 
-  _valsToPlainText(vals) {
+  _valsToPlainText (vals) {
     return vals.map((rowVals) => {
       return rowVals.join('\t')
     }).join('\n')
   }
 
-  _htmlToVals(html) {
+  _htmlToVals (html) {
     let doc = DefaultDOMElement.parseHTML(html)
     let table = doc.find('table')
     if (table) {

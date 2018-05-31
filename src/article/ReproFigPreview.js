@@ -4,8 +4,7 @@ import { NodeComponent } from 'substance'
   Renders a keyboard-selectable reproducable figure target item
 */
 export default class ReproFigPreview extends NodeComponent {
-
-  render($$) {
+  render ($$) {
     let node = this.props.node
     let el = $$('div')
       .addClass('sc-repro-fig-preview')
@@ -21,7 +20,7 @@ export default class ReproFigPreview extends NodeComponent {
     return el
   }
 
-  _renderLabel($$) {
+  _renderLabel ($$) {
     const node = this.props.node
     const label = node && node.state ? this.getLabel(node.state.label) : ''
 

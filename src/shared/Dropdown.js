@@ -1,8 +1,7 @@
 import {Component, Button} from 'substance'
 
 class Dropdown extends Component {
-
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-dropdown')
     el.append(
       this.renderButton($$)
@@ -20,7 +19,7 @@ class Dropdown extends Component {
     return el
   }
 
-  renderButton($$) {
+  renderButton ($$) {
     let btn = $$(Button, {
       label: this.props.name,
       icon: this.props.icon,
@@ -30,12 +29,12 @@ class Dropdown extends Component {
     return btn
   }
 
-  renderItems($$) {
+  renderItems ($$) {
     const items = this.props.items
     let els = []
     items.forEach((item) => {
       let itemEl
-      switch(item.type) {
+      switch (item.type) {
         case 'button': {
           itemEl = this.renderButtonItem($$, item)
           break
@@ -53,7 +52,7 @@ class Dropdown extends Component {
     return els
   }
 
-  renderButtonItem($$, item) {
+  renderButtonItem ($$, item) {
     return $$(Button, {
       label: item.label,
       icon: item.icon,
@@ -63,7 +62,7 @@ class Dropdown extends Component {
     }).addClass('se-button')
   }
 
-  renderChoiceItem($$, item) {
+  renderChoiceItem ($$, item) {
     const choices = item.choices || []
     let el = $$('div').addClass('se-choice')
     el.append(
@@ -75,7 +74,7 @@ class Dropdown extends Component {
       let input = $$('input').attr({
         type: 'radio',
         name: item.name,
-        value: value,
+        value: value
       })
       if (value === item.value) {
         input.attr('checked', true)
@@ -92,14 +91,14 @@ class Dropdown extends Component {
     return el
   }
 
-  onClickButton() {
+  onClickButton () {
     let open = !this.state.open
     this.setState({
       open: open
     })
   }
 
-  onChangeChoice(event) {
+  onChangeChoice (event) {
     this.el.emit('select', {
       name: event.target.name,
       value: event.target.value

@@ -4,7 +4,7 @@ const MAX_ROWS = 10
 
 export default
 class TableValueComponent extends Component {
-  render($$) {
+  render ($$) {
     const table = this.props.value.data
     const data = table.data
     const columnNames = Object.keys(data)
@@ -16,7 +16,7 @@ class TableValueComponent extends Component {
     let tableEl = $$('table').addClass('sc-table-value')
 
     const thead = $$('thead')
-    columnNames.forEach((name)=>{
+    columnNames.forEach((name) => {
       thead.append(
         $$('th').append(name)
       )
@@ -27,7 +27,7 @@ class TableValueComponent extends Component {
       const tbody = $$('tbody')
       for (let row = 0; row < rows && row < MAX_ROWS; row++) {
         let tr = $$('tr')
-        columnNames.forEach((name)=>{
+        columnNames.forEach((name) => {
           tr.append(
             $$('td').text(data[name][row])
           )
@@ -36,12 +36,12 @@ class TableValueComponent extends Component {
       }
       if (this.props.pointer) {
         let tr = $$('tr')
-        columnNames.forEach(()=>{
+        columnNames.forEach(() => {
           tr.append(
             $$('td').text('...')
           )
         })
-        tbody.append(tr)  
+        tbody.append(tr)
       }
       tableEl.append(tbody)
     }

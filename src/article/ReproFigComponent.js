@@ -2,12 +2,11 @@ import { NodeComponent } from 'substance'
 import { getLabel } from 'substance-texture'
 
 export default class ReproFigComponent extends NodeComponent {
-
-  render($$) {
+  render ($$) {
     const node = this.props.node
 
     let el = $$('div')
-      .addClass('sc-'+node.type)
+      .addClass('sc-' + node.type)
       .attr('data-id', node.id)
 
     let label = getLabel(node)
@@ -45,14 +44,13 @@ export default class ReproFigComponent extends NodeComponent {
     return el
   }
 
-  _getContentType() {
+  _getContentType () {
     return 'cell'
   }
 
-  _onLabelsChanged(refType) {
+  _onLabelsChanged (refType) {
     if (refType === this.props.node.type) {
       this.rerender()
     }
   }
-
 }

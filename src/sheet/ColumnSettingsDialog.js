@@ -1,12 +1,11 @@
 import { Component, getRelativeBoundingRect, domHelpers, isEqual } from 'substance'
 
 export default class ColumnSettingsDialog extends Component {
-
-  didMount() {
+  didMount () {
     this._position()
   }
 
-  render($$) {
+  render ($$) {
     let el = $$('div')
       .addClass('sc-dialog')
       .addClass('sc-column-settings-dialog')
@@ -19,14 +18,14 @@ export default class ColumnSettingsDialog extends Component {
     return el
   }
 
-  _renderHead($$) {
+  _renderHead ($$) {
     let head = $$('div').addClass('se-head')
     let title = $$('div').addClass('se-title').text(this.getTitle())
     head.append(title)
     return head
   }
 
-  _renderBody($$) {
+  _renderBody ($$) {
     const node = this._getNode()
     // const type = node.attr('type')
     let body = $$('div').addClass('se-body')
@@ -60,7 +59,7 @@ export default class ColumnSettingsDialog extends Component {
     return body
   }
 
-  _renderFoot($$) {
+  _renderFoot ($$) {
     let foot = $$('div').addClass('se-foot')
     foot.append(
       $$('button').addClass('se-confirm').text(this.getLabel('ok'))
@@ -73,11 +72,11 @@ export default class ColumnSettingsDialog extends Component {
     return foot
   }
 
-  getTitle() {
+  getTitle () {
     return this.getLabel('title:column-settings')
   }
 
-  _position() {
+  _position () {
     let sheetComponent = this._getSheetComponent()
     let cellComponent = this._getCellComponent()
     if (cellComponent) {
@@ -90,44 +89,44 @@ export default class ColumnSettingsDialog extends Component {
     }
   }
 
-  _getSheetComponent() {
+  _getSheetComponent () {
     return this.props.params.surface
   }
 
-  _getCommandState() {
+  _getCommandState () {
     return this.props.params.commandState
   }
 
-  _getCellComponent() {
+  _getCellComponent () {
     let commandState = this._getCommandState()
     let sheetComponent = this._getSheetComponent()
     return sheetComponent._getCellComponent(-1, commandState.colIdx)
   }
 
-  _getNode() {
+  _getNode () {
     let commandState = this._getCommandState()
     return commandState.node
   }
 
-  _getEditorSession() {
+  _getEditorSession () {
     return this.props.params.editorSession
   }
 
-  _hide() {
+  _hide () {
     this._getSheetComponent()._hideDialog()
   }
 
-  _onConfirm() {
+  _onConfirm () {
     // hide the dialog
     this._hide()
     // and update the model
     const node = this._getNode()
     let oldAttr = {
-      name: node.attr('name'),
+      name: node.attr('name')
       // type: node.attr('type')
     }
     let newAttr = {
-      name: this.refs.name.val(),
+      name: this.refs.name.val()
       // type: this.refs.type.val()
     }
     if (!isEqual(oldAttr, newAttr)) {
@@ -140,16 +139,15 @@ export default class ColumnSettingsDialog extends Component {
     }
   }
 
-  _onCancel() {
+  _onCancel () {
     this._hide()
   }
 
-  _onKeyDown(e) {
-    if(e.keyCode === 13) {
+  _onKeyDown (e) {
+    if (e.keyCode === 13) {
       this._onConfirm()
     } else if (e.keyCode === 27) {
       this._hide()
     }
   }
-
 }

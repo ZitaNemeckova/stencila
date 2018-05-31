@@ -1,4 +1,4 @@
-export default function(SNIPPET) {
+export default function (SNIPPET) {
   return `
 <!DOCTYPE html>
 <html>

@@ -1,6 +1,6 @@
 import { DefaultDOMElement as DOM, isString } from 'substance'
 
-export function getSelection(editorSession) {
+export function getSelection (editorSession) {
   let sel = editorSession.getSelection()
   if (sel.isCustomSelection() && sel.customType === 'sheet') {
     return sel.data
@@ -9,7 +9,7 @@ export function getSelection(editorSession) {
   }
 }
 
-export function getRange(editorSession) {
+export function getRange (editorSession) {
   const sel = getSelection(editorSession)
   if (!sel) return null
   const sheet = editorSession.getDocument()
@@ -59,7 +59,7 @@ export const EMPTY_SHEET = `<?xml version="1.0"?>
   }
   ```
 */
-export function createSheetXMLFromSpec(spec) {
+export function createSheetXMLFromSpec (spec) {
   let doc = DOM.parseXML(EMPTY_SHEET)
   const $$ = doc.createElement.bind(doc)
   let ncols
@@ -105,7 +105,7 @@ export function createSheetXMLFromSpec(spec) {
   return doc.serialize()
 }
 
-export function generateEmptySheetXML(nrows, ncols) {
+export function generateEmptySheetXML (nrows, ncols) {
   let cells = []
   for (let i = 0; i < nrows; i++) {
     let row = []

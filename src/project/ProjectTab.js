@@ -1,8 +1,7 @@
 import { Component, FontAwesomeIcon } from 'substance'
 
 export default class ProjectTab extends Component {
-
-  getInitialState() {
+  getInitialState () {
     return {
       edit: false,
       error: false,
@@ -10,7 +9,7 @@ export default class ProjectTab extends Component {
     }
   }
 
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-project-tab')
     let entry = this.props.entry
     let docTypeEl = $$('div').addClass('se-doc-type')
@@ -23,16 +22,16 @@ export default class ProjectTab extends Component {
 
     if (this.state.edit) {
       let input = $$('input').addClass('se-input').attr({value: entry.name})
-          .ref('documentName')
-          .on('blur', this._onBlur)
-          .on('keydown', this._onKeyDown)
-          .on('input', this._onInput)
+        .ref('documentName')
+        .on('blur', this._onBlur)
+        .on('keydown', this._onKeyDown)
+        .on('input', this._onInput)
       if (this.state.error) {
         input.addClass('sm-error')
       }
       el.addClass('sm-edit sm-active').append(input)
     } else {
-      el.append(' '+(entry.name || entry.id))
+      el.append(' ' + (entry.name || entry.id))
         .on('click', this._openDocument)
         .on('dblclick', this._editDocumentName)
         .on('contextmenu', this._toggleMenu)
@@ -60,7 +59,7 @@ export default class ProjectTab extends Component {
     return el
   }
 
-  _onKeyDown(e) {
+  _onKeyDown (e) {
     let handled = false
     switch (e.key) {
       case 'Escape': {
@@ -81,7 +80,7 @@ export default class ProjectTab extends Component {
     }
   }
 
-  _onBlur(e) {
+  _onBlur (e) {
     if (this._skipBlur || !this.isMounted()) {
       return
     }
@@ -91,7 +90,7 @@ export default class ProjectTab extends Component {
     }
   }
 
-  _onInput() {
+  _onInput () {
     let err = this._validateNewName()
     if (err) {
       this.extendState({ error: err })
@@ -100,7 +99,7 @@ export default class ProjectTab extends Component {
     }
   }
 
-  _openDocument() {
+  _openDocument () {
     if (!this.isMounted()) return
 
     if (!this.props.active) {
@@ -108,22 +107,22 @@ export default class ProjectTab extends Component {
     }
   }
 
-  _removeDocument() {
+  _removeDocument () {
     this.send('removeDocument', this.props.entry.id)
   }
 
-  _toggleMenu(e) {
+  _toggleMenu (e) {
     e.preventDefault()
     e.stopPropagation()
     this.extendState({ menu: !this.state.menu })
   }
 
-  _editDocumentName() {
+  _editDocumentName () {
     this.extendState({ edit: true, error: false })
     this._grabFocus()
   }
 
-  _grabFocus() {
+  _grabFocus () {
     let inputEl = this.refs.documentName.getNativeElement()
     inputEl.focus()
     if (inputEl.setSelectionRange) {
@@ -132,12 +131,12 @@ export default class ProjectTab extends Component {
     }
   }
 
-  _cancelEdit() {
+  _cancelEdit () {
     this.refs.documentName.val(this.props.entry.name)
     this.extendState({ edit: false, error: false })
   }
 
-  _validateAndConfirm(e) {
+  _validateAndConfirm (e) {
     const oldName = this.props.entry.name
     const newName = this.refs.documentName.val()
     let err = this._validateNewName()
@@ -146,7 +145,7 @@ export default class ProjectTab extends Component {
       e.preventDefault()
       this._skipBlur = true
       this._alert(err)
-      this.extendState({ edit:true, error: err })
+      this.extendState({ edit: true, error: err })
       // HACK: the problem is that the input gets blurred
       // in a strange way when clicking the alert dialog button
       // it helps to wait a bit with re-activating the onBlur listener
@@ -161,11 +160,11 @@ export default class ProjectTab extends Component {
     }
   }
 
-  _validateNewName() {
+  _validateNewName () {
     let newName = this.refs.documentName.val()
     newName = newName.trim()
     if (!/^[^']+$/.exec(newName)) {
-      return "Name contains invalid characters!"
+      return 'Name contains invalid characters!'
     }
     const archive = this.context.documentArchive
     let entries = archive.getDocumentEntries()
@@ -173,15 +172,14 @@ export default class ProjectTab extends Component {
       let entry = entries[i]
       if (entry.id === this.props.entry.id) continue
       if (entry.name === newName) {
-        return "Another document with this name exists."
+        return 'Another document with this name exists.'
       }
     }
   }
 
-  _alert(msg) {
+  _alert (msg) {
     if (window.alert) {
       window.alert(msg) // eslint-disable-line no-alert
     }
   }
-
 }

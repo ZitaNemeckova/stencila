@@ -1,21 +1,20 @@
 import { Component, FontAwesomeIcon } from 'substance'
 
 export default class AddProjectTab extends Component {
-
-  getInitialState() {
+  getInitialState () {
     return {
       menu: false
     }
   }
 
-  render($$) {
+  render ($$) {
     // NOTE: We use sc-project-tab here to inherit its styles
     let el = $$('div').addClass('sc-add-project-tab sc-project-tab')
 
     el.append(
       $$(FontAwesomeIcon, {icon: 'fa-plus-circle'})
     )
-    .on('click', this._toggleMenu)
+      .on('click', this._toggleMenu)
 
     if (this.state.menu) {
       el.append(
@@ -28,16 +27,15 @@ export default class AddProjectTab extends Component {
     return el
   }
 
-  _toggleMenu() {
+  _toggleMenu () {
     this.extendState({ menu: !this.state.menu })
   }
 
-  _addSheet() {
+  _addSheet () {
     this.send('addDocument', 'sheet')
   }
 
-  _addArticle() {
+  _addArticle () {
     this.send('addDocument', 'article')
   }
-
 }

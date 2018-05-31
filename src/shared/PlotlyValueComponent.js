@@ -3,21 +3,20 @@ import { getFrameSize } from './cellHelpers'
 import Plotly from 'plotly.js'
 
 export default class PlotlyValueComponent extends Component {
-
-  didMount() {
+  didMount () {
     this._renderPlotly()
   }
 
-  didUpdate() {
+  didUpdate () {
     this._renderPlotly()
   }
 
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-plotly-value')
     return el
   }
 
-  _renderPlotly() {
+  _renderPlotly () {
     if (this.el) {
       let value = this.props.value
       let spec = value.data

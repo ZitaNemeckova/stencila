@@ -17,7 +17,7 @@ const _MAP = LIST.reduce((m, n) => {
   return m
 }, {})
 
-export function isLanguage(str) {
+export function isLanguage (str) {
   return Boolean(_MAP[str])
 }
 

@@ -8,8 +8,7 @@ const LABELS = {
 }
 
 export default class ContextPane extends Component {
-
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-context-pane')
     if (this.props.contextId) {
       el.append(
@@ -27,7 +26,7 @@ export default class ContextPane extends Component {
     return el
   }
 
-  _renderContextContent($$) {
+  _renderContextContent ($$) {
     let el = $$('div').addClass('se-content')
     if (this.props.contextId === 'help') {
       el.append(
@@ -43,10 +42,7 @@ export default class ContextPane extends Component {
     return el
   }
 
-  _closeContext() {
+  _closeContext () {
     this.send('closeContext')
   }
-
-
-
 }

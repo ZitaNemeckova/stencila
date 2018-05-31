@@ -1,13 +1,13 @@
 
-export function setCellLanguage(editorSession, cellId, newLanguage) {
+export function setCellLanguage (editorSession, cellId, newLanguage) {
   editorSession.transaction((tx) => {
     let cell = tx.get(cellId)
     let sourceCode = cell.find('source-code')
     sourceCode.attr({ language: newLanguage })
-  }, { action: 'setCellLanguage'})
+  }, { action: 'setCellLanguage' })
 }
 
-export function insertCell(editorSession) {
+export function insertCell (editorSession) {
   editorSession.transaction(tx => {
     let sel = tx.selection
     let cell = tx.createElement('cell')
@@ -28,7 +28,7 @@ export function insertCell(editorSession) {
   }, { action: 'insertCell' })
 }
 
-export function insertReproFig(editorSession) {
+export function insertReproFig (editorSession) {
   editorSession.transaction(tx => {
     let sel = tx.selection
     let cell = tx.createElement('cell')

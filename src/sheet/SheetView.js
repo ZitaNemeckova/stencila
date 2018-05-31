@@ -14,29 +14,28 @@ import getBoundingRect from '../util/getBoundingRect'
  It provides an API to map from screen coordinates to column and row indexes.
 */
 export default class SheetView extends Component {
-
-  shouldRerender() {
+  shouldRerender () {
     return false
   }
 
-  didMount() {
+  didMount () {
     this.props.viewport.on('scroll', this._onScroll, this)
     this._updateViewport()
   }
 
-  didUpdate() {
+  didUpdate () {
     this._updateViewport()
   }
 
-  dispose() {
+  dispose () {
     this.props.viewport.off(this)
   }
 
-  update() {
+  update () {
     this.rerender()
   }
 
-  render($$) {
+  render ($$) {
     const sheet = this.props.sheet
     const viewport = this.props.viewport
     const M = sheet.getColumnCount()
@@ -55,7 +54,7 @@ export default class SheetView extends Component {
     let width = this.props.cornerWidth || 50
     corner.css({ width })
     head.append(corner)
-    for(let colIdx = 0; colIdx < M; colIdx++) {
+    for (let colIdx = 0; colIdx < M; colIdx++) {
       let columnMeta = sheet.getColumnMeta(colIdx)
       let th = $$(SheetColumnHeader, { node: columnMeta, colIdx }).ref(columnMeta.id)
       let w = th.getWidth()
@@ -74,12 +73,12 @@ export default class SheetView extends Component {
     return el
   }
 
-  _updateViewport() {
+  _updateViewport () {
     this._updateHeader()
     this._updateBody()
   }
 
-  _updateHeader() {
+  _updateHeader () {
     let viewport = this.props.viewport
     // Note: in contrast to the render method
     // we can use the real width here
@@ -91,7 +90,7 @@ export default class SheetView extends Component {
     let cols = this.refs.head.el.children
     let i
     for (i = 1; i < cols.length; i++) {
-      let colIdx = i-1
+      let colIdx = i - 1
       let th = cols[i]
       if (colIdx < viewport.startCol) {
         th.addClass('sm-hidden')
@@ -105,14 +104,14 @@ export default class SheetView extends Component {
         viewport.endCol++
       }
     }
-    for (i = i+1; i < cols.length; i++) {
+    for (i = i + 1; i < cols.length; i++) {
       let th = cols[i]
       th.addClass('sm-hidden')
     }
     this.el.css({ width: viewport.width })
   }
 
-  _updateBody() {
+  _updateBody () {
     let viewport = this.props.viewport
     viewport.height = this.refs.corner.el.getHeight()
     viewport.endRow = viewport.startRow
@@ -127,7 +126,7 @@ export default class SheetView extends Component {
       let cols = row.children
       for (let i = 1; i < cols.length; i++) {
         let td = cols[i]
-        let colIdx = i-1
+        let colIdx = i - 1
         if (colIdx < viewport.startCol || colIdx > viewport.endCol) {
           td.addClass('sm-hidden')
         } else {
@@ -143,7 +142,7 @@ export default class SheetView extends Component {
     }
   }
 
-  getBoundingRect(rowIdx, colIdx) {
+  getBoundingRect (rowIdx, colIdx) {
     let top = 0, left = 0, height = 0, width = 0
     // in header
     let rowComp
@@ -161,7 +160,7 @@ export default class SheetView extends Component {
     if (colIdx === -1) {
       colComp = this.refs.corner
     } else {
-      colComp = this.refs.head.getChildAt(colIdx+1)
+      colComp = this.refs.head.getChildAt(colIdx + 1)
     }
     if (colComp) {
       let rect = getRelativeBoundingRect(colComp.el, this.el)
@@ -171,10 +170,10 @@ export default class SheetView extends Component {
     return { top, left, width, height }
   }
 
-  getCellComponent(rowIdx, colIdx) {
+  getCellComponent (rowIdx, colIdx) {
     if (rowIdx === -1) {
       // retrieve a header cell
-      return this.refs.head.getChildAt(colIdx+1)
+      return this.refs.head.getChildAt(colIdx + 1)
     } else {
       let tr = this.refs.body.getRowComponent(rowIdx)
       if (tr) {
@@ -185,12 +184,12 @@ export default class SheetView extends Component {
     return null
   }
 
-  getCellComponentForCell(cell) {
+  getCellComponentForCell (cell) {
     // TODO: need to revisit this for a better implementation
     return this.refs.body.find(`td[data-cell-id="${cell.id}"]`)
   }
 
-  getCornerComponent() {
+  getCornerComponent () {
     return this.refs.corner
   }
 
@@ -198,7 +197,7 @@ export default class SheetView extends Component {
    * Tries to resolve row and column index, and type of cell
    * for a given event
    */
-  getTargetForEvent(e) {
+  getTargetForEvent (e) {
     const clientX = e.clientX
     const clientY = e.clientY
     let colIdx = this.getColumnIndexForClientX(clientX)
@@ -219,20 +218,20 @@ export default class SheetView extends Component {
   }
 
   // TODO: rename this to indicate usage: map clientX to column
-  getColumnIndexForClientX(x) {
+  getColumnIndexForClientX (x) {
     const headEl = this.refs.head.el
     const children = headEl.children
     for (let i = 0; i < children.length; i++) {
       let child = children[i]
       if (_isXInside(x, getBoundingRect(child))) {
-        return i-1
+        return i - 1
       }
     }
     return undefined
   }
 
   // TODO: rename this to indicate usage: map clientY to row
-  getRowIndexForClientY(y) {
+  getRowIndexForClientY (y) {
     const headEl = this.refs.head.el
     if (_isYInside(y, getBoundingRect(headEl))) {
       return -1
@@ -248,7 +247,7 @@ export default class SheetView extends Component {
     return undefined
   }
 
-  _onScroll(dr, dc) {
+  _onScroll (dr, dc) {
     if (dc && !dr) {
       this._updateViewport()
     } else if (dr && !dc) {
@@ -260,31 +259,30 @@ export default class SheetView extends Component {
     }
   }
 
-  _selectAll() {
+  _selectAll () {
     this.send('selectAll')
   }
 }
 
-function _isXInside(x, rect) {
-  return x >= rect.left && x <= rect.left+rect.width
+function _isXInside (x, rect) {
+  return x >= rect.left && x <= rect.left + rect.width
 }
 
-function _isYInside(y, rect) {
-  return y >= rect.top && y <= rect.top+rect.height
+function _isYInside (y, rect) {
+  return y >= rect.top && y <= rect.top + rect.height
 }
 
 class TableBody extends Component {
-
-  getInitialState() {
+  getInitialState () {
     return {}
   }
 
-  render($$) {
+  render ($$) {
     let el = $$('tbody')
     let sheet = this.props.sheet
     let viewport = this.props.viewport
     let N = sheet.getRowCount()
-    let n = Math.min(viewport.startRow+viewport.P, N)
+    let n = Math.min(viewport.startRow + viewport.P, N)
     for (let rowIdx = viewport.startRow; rowIdx < n; rowIdx++) {
       el.append(
         $$(TableRow, {
@@ -297,7 +295,7 @@ class TableBody extends Component {
     return el
   }
 
-  update() {
+  update () {
     const viewport = this.props.viewport
     let dr = viewport.startRow - this._startRow
     // doing an incremental render if scrolling
@@ -312,17 +310,17 @@ class TableBody extends Component {
     }
   }
 
-  getRowComponent(rowIdx) {
+  getRowComponent (rowIdx) {
     return this.refs[rowIdx]
   }
 
-  _append(dr) {
+  _append (dr) {
     let renderContext = RenderingEngine.createContext(this)
     let $$ = renderContext.$$
     let sheet = this.props.sheet
     let viewport = this.props.viewport
     const N = sheet.getRowCount()
-    for(let i=0; i<dr; i++) {
+    for (let i = 0; i < dr; i++) {
       // Note: to be able to scroll to the very end
       // we stop appending rows when hitting the bottom of the sheet
       // but still removing the first row
@@ -330,7 +328,8 @@ class TableBody extends Component {
       if (rowIndex < N) {
         this.append(
           $$(TableRow, {
-            sheet, viewport,
+            sheet,
+            viewport,
             rowIdx: rowIndex
           }).ref(String(rowIndex))
         )
@@ -340,34 +339,33 @@ class TableBody extends Component {
     }
   }
 
-  _prepend(dr) {
+  _prepend (dr) {
     let renderContext = RenderingEngine.createContext(this)
     let $$ = renderContext.$$
     let sheet = this.props.sheet
     let viewport = this.props.viewport
-    for(let i=0; i>dr; i--) {
+    for (let i = 0; i > dr; i--) {
       this._startRow--
       let rowIndex = this._startRow
       this.insertAt(0,
         $$(TableRow, {
-          sheet, viewport,
+          sheet,
+          viewport,
           rowIdx: rowIndex
         }).ref(String(rowIndex))
       )
       // only remove the trailing row if there are enough
       // rows present already
       if (this.getChildCount() > viewport.P) {
-        this.removeChild(this.getChildAt(this.getChildCount()-1))
+        this.removeChild(this.getChildAt(this.getChildCount() - 1))
       }
       this._nextRow--
     }
   }
-
 }
 
 class TableRow extends Component {
-
-  render($$) {
+  render ($$) {
     let sheet = this.props.sheet
     let rowIdx = this.props.rowIdx
     let viewport = this.props.viewport
@@ -378,7 +376,7 @@ class TableRow extends Component {
     el.append(
       $$(SheetRowHeader, { rowIdx: rowIdx })
       // within a row, the header is referenced as '-1'
-      .ref(String(-1))
+        .ref(String(-1))
     )
     for (let j = 0; j < M; j++) {
       const cell = sheet.getCell(rowIdx, j)
@@ -398,16 +396,16 @@ class TableRow extends Component {
     }
     el.attr('data-row', rowIdx)
     el.css({
-      "height": height
+      'height': height
     })
     return el
   }
 
-  hide() {
+  hide () {
     this.setState('hidden')
   }
 
-  getCellComponent(colIdx) {
+  getCellComponent (colIdx) {
     return this.refs[colIdx]
   }
 }

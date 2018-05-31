@@ -1,12 +1,11 @@
 import { Component } from 'substance'
 
-
 export default class FunctionUsageComponent extends Component {
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-function-usage')
     let spec = this.props.spec
 
-    // TODO: Currently only using the first method, allow for 
+    // TODO: Currently only using the first method, allow for
     // multiple methods (ie. overloads with different parameter types)
     const params = Object.values(spec.methods)[0].params
     let paramIndex = this.props.paramIndex
@@ -46,7 +45,7 @@ export default class FunctionUsageComponent extends Component {
     return el
   }
 
-  _openDocumentation(e) {
+  _openDocumentation (e) {
     e.preventDefault()
     e.stopPropagation()
     const spec = this.props.spec
@@ -55,7 +54,7 @@ export default class FunctionUsageComponent extends Component {
 }
 
 class FunctionSignature extends Component {
-  render($$) {
+  render ($$) {
     let spec = this.props.spec
     const params = Object.values(spec.methods)[0].params
 
@@ -66,7 +65,7 @@ class FunctionSignature extends Component {
         if (i === this.props.paramIndex) {
           paramEl.addClass('sm-active')
         }
-        paramsEl.append(paramEl);
+        paramsEl.append(paramEl)
         if (i < params.length - 1) {
           paramsEl.append(',')
         }

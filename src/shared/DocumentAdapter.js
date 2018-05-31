@@ -6,11 +6,10 @@ import { setSource } from './cellHelpers'
   Base-Class for adapters between document and engine.
 */
 export class DocumentAdapter {
-
   // TODO: dicuss ownership of 'name'
   // It seems that this is a property inside the manifest,
   // and not part of the JATS file
-  constructor(engine, editorSession, id, name) {
+  constructor (engine, editorSession, id, name) {
     this.engine = engine
     this.editorSession = editorSession
     this.doc = editorSession.getDocument()
@@ -24,7 +23,7 @@ export class DocumentAdapter {
     this._initialize()
   }
 
-  _initialize() {
+  _initialize () {
     throw new Error('This method is abstract')
   }
 
@@ -33,7 +32,7 @@ export class DocumentAdapter {
 
     @param {Set<Cell>} updates updated cells.
   */
-  _onEngineUpdate(type, cellsByDocId) {
+  _onEngineUpdate (type, cellsByDocId) {
     // Note: for now we are sharing the cell states with the engine
     // thus, we can just notify the session about the changed cells
     const docId = this.doc.id
@@ -79,14 +78,14 @@ export class DocumentAdapter {
   }
 }
 
-export function getQualifiedId(node) {
+export function getQualifiedId (node) {
   if (!node._qualifiedId) {
     node._qualifiedId = qualifiedId(node.getDocument(), node)
   }
   return node._qualifiedId
 }
 
-export function mapCellState(doc, cellState) {
+export function mapCellState (doc, cellState) {
   // TODO: we need to be careful with this
   // The node state should be something general, document specific
   // Instead we take all necessary parts of the engine's cell state

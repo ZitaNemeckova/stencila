@@ -1,12 +1,12 @@
 /* eslint-disable no-multi-spaces */
 /* eslint-disable indent */
-export default function uuid(a) {
+export default function uuid (a) {
   return a           // if the placeholder was passed, return
     ? (              // a random number from 0 to 15
       a ^            // unless b is 8,
-      Math.random()  // in which case
-      * 16           // a random number from
-      >> a/4         // 8 to 11
+      Math.random() *  // in which case
+      16 >>           // a random number from
+      a / 4         // 8 to 11
       ).toString(16) // in hexadecimal
     : (              // or otherwise a concatenated string:
       [1e7] +        // 10000000 +

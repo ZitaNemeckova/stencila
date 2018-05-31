@@ -1,8 +1,7 @@
 import { ToolDropdown } from 'substance'
 
 export default class SwitchTypeDropdown extends ToolDropdown {
-
-  _getToggleName(commandStates) {
+  _getToggleName (commandStates) {
     let toggleName = super._getToggleName(commandStates)
     // EXPERIMENTAL: trying to bring back the old way of using the
     // switch text type dropdown label as place to show th current context
@@ -36,10 +35,9 @@ export default class SwitchTypeDropdown extends ToolDropdown {
     }
     return toggleName
   }
-
 }
 
-function _nodeLabel(node) {
+function _nodeLabel (node) {
   if (node) {
     return node.type
   }

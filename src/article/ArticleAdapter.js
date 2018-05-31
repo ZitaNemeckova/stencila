@@ -2,11 +2,10 @@ import { DocumentAdapter, mapCellState } from '../shared/DocumentAdapter'
 import { getSource, getLang } from '../shared/cellHelpers'
 
 /*
-  Connects Engine and Article.
+  Used to connect Engine and Article.
 */
 export default class ArticleAdapter extends DocumentAdapter {
-
-  _initialize() {
+  _initialize () {
     const doc = this.doc
     const engine = this.engine
 
@@ -30,7 +29,7 @@ export default class ArticleAdapter extends DocumentAdapter {
     this.engine.on('update', this._onEngineUpdate, this)
   }
 
-  _getCellNodes() {
+  _getCellNodes () {
     return this.doc.findAll('cell')
   }
 
@@ -38,7 +37,7 @@ export default class ArticleAdapter extends DocumentAdapter {
     Call on every document change detecting updates to cells that
     are used to keep the Engine's model in sync.
   */
-  _onDocumentChange(change) {
+  _onDocumentChange (change) {
     const doc = this.doc
     const model = this.model
     // inspecting ops to detect structural changes and updates
@@ -108,17 +107,16 @@ export default class ArticleAdapter extends DocumentAdapter {
   /*
     Used internally to filter cells.
   */
-  _isCell(node) {
+  _isCell (node) {
     return node.type === 'cell'
   }
 
-
-  static connect(engine, editorSession, id, name) {
+  static connect (engine, editorSession, id, name) {
     return new ArticleAdapter(engine, editorSession, id, name)
   }
 }
 
-function _getCellData(cell) {
+function _getCellData (cell) {
   return {
     id: cell.id,
     lang: getLang(cell),
@@ -126,13 +124,13 @@ function _getCellData(cell) {
   }
 }
 
-function _addAutorunFeature(doc, adapter) {
+function _addAutorunFeature (doc, adapter) {
   Object.defineProperty(doc, 'autorun', {
-    set(val) {
+    set (val) {
       doc._autorun = val
       adapter.model.setAutorun(val)
     },
-    get() {
+    get () {
       return doc._autorun
     }
   })

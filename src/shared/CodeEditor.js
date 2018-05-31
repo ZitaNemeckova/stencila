@@ -5,8 +5,7 @@ import {
 import analyseCode from './analyseCode'
 
 export default class CodeEditor extends Component {
-
-  didMount() {
+  didMount () {
     super.didMount()
 
     // this is used to run the code analysis
@@ -17,13 +16,13 @@ export default class CodeEditor extends Component {
     this._onCodeUpdate()
   }
 
-  dispose() {
+  dispose () {
     super.dispose()
 
     this.context.editorSession.off(this)
   }
 
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-code-editor')
     // the source code
     const path = this.props.path
@@ -49,11 +48,11 @@ export default class CodeEditor extends Component {
     return el
   }
 
-  getSurfaceId() {
+  getSurfaceId () {
     return this.refs.contentEditor.getId()
   }
 
-  _onCodeUpdate() {
+  _onCodeUpdate () {
     let code = this._getCode()
     let shouldAnalyse = true
     // TODO: how can we generalize this?
@@ -77,12 +76,12 @@ export default class CodeEditor extends Component {
     this._extendState({ tokens, symbols, nodes })
   }
 
-  _getCode() {
+  _getCode () {
     const path = this.props.path
     return this.context.editorSession.getDocument().get(path)
   }
 
-  _setMarkers(tokens) {
+  _setMarkers (tokens) {
     const path = this.props.path
     const markersManager = this.context.editorSession.markersManager
     // TODO: renamve this helper to `getMarkersForTokens`
@@ -90,13 +89,13 @@ export default class CodeEditor extends Component {
     markersManager.setMarkers(`code-analysis@${path.join('.')}`, markers)
   }
 
-  _extendState(values) {
+  _extendState (values) {
     // TODO: do we really want this?
     let state = this._getState()
     Object.assign(state, values)
   }
 
-  _getState() {
+  _getState () {
     // TODO: this should be general, not tied to Stencila Cells
     const path = this.props.path
     const nodeId = path[0]
@@ -107,7 +106,7 @@ export default class CodeEditor extends Component {
     return node.state
   }
 
-  _onTabKey(e) {
+  _onTabKey (e) {
     e.stopPropagation()
     const editorSession = this.context.editorSession
     const head = this._getCurrentLineHead()
@@ -120,12 +119,12 @@ export default class CodeEditor extends Component {
   }
 
   // only used if multiline=true
-  _onEnterKey(e) {
+  _onEnterKey (e) {
     e.stopPropagation()
     this._insertNewLine()
   }
 
-  _insertNewLine() {
+  _insertNewLine () {
     const editorSession = this.context.editorSession
     const indent = this._getCurrentIndent()
     editorSession.transaction((tx) => {
@@ -133,7 +132,7 @@ export default class CodeEditor extends Component {
     })
   }
 
-  _getCurrentIndent() {
+  _getCurrentIndent () {
     const line = this._getCurrentLineHead()
     const match = /^(\s+)/.exec(line)
     if (match) {
@@ -143,7 +142,7 @@ export default class CodeEditor extends Component {
     }
   }
 
-  _getCurrentLineHead() {
+  _getCurrentLineHead () {
     const editorSession = this.context.editorSession
     const doc = editorSession.getDocument()
     const sel = editorSession.getSelection()
@@ -154,7 +153,7 @@ export default class CodeEditor extends Component {
     const exprStr = doc.get(this.props.path)
     const head = exprStr.slice(0, offset)
     const lastNL = head.lastIndexOf('\n')
-    return head.slice(lastNL+1)
+    return head.slice(lastNL + 1)
   }
 }
 

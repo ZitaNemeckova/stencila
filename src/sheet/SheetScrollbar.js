@@ -1,25 +1,24 @@
 import {
   DefaultDOMElement, Component,
-  platform,
+  platform
 } from 'substance'
 import getBoundingRect from '../util/getBoundingRect'
 
 export default class SheetScrollbar extends Component {
-
-  didMount() {
+  didMount () {
     this._updatePositions()
     this.props.viewport.on('scroll', this._onScroll, this)
   }
 
-  dispose() {
+  dispose () {
     this.props.viewport.off(this)
   }
 
-  didUpdate() {
+  didUpdate () {
     this._updatePositions()
   }
 
-  render($$) {
+  render ($$) {
     const horizontal = this._isHorizontal()
     let el = $$('div')
       .addClass('sc-sheet-scrollbar')
@@ -34,7 +33,7 @@ export default class SheetScrollbar extends Component {
     return el
   }
 
-  _renderScrollArea($$) {
+  _renderScrollArea ($$) {
     let scrollArea = $$('div').ref('scrollArea').addClass('se-scroll-area')
     let thumb = $$('div').ref('thumb').addClass('se-thumb')
       .on('mousedown', this._onMousedownThumb)
@@ -43,7 +42,7 @@ export default class SheetScrollbar extends Component {
     return scrollArea
   }
 
-  _renderButtons($$) {
+  _renderButtons ($$) {
     const iconProvider = this.context.iconProvider
     const horizontal = this._isHorizontal()
     let buttons = $$('div').addClass('se-buttons')
@@ -62,22 +61,22 @@ export default class SheetScrollbar extends Component {
     return buttons
   }
 
-  _isHorizontal() {
+  _isHorizontal () {
     return this.props.axis === 'x'
   }
 
-  _updatePositions() {
+  _updatePositions () {
     const sheet = this.props.sheet
     const viewport = this.props.viewport
     const horizontal = this._isHorizontal()
     let factor, scrollFactor, scrollbarSize
     if (horizontal) {
-      factor = (viewport.endCol-viewport.startCol+1)/sheet.getColumnCount()
-      scrollFactor = viewport.startCol/sheet.getColumnCount()
+      factor = (viewport.endCol - viewport.startCol + 1) / sheet.getColumnCount()
+      scrollFactor = viewport.startCol / sheet.getColumnCount()
       scrollbarSize = this.refs.scrollArea.el.getWidth()
     } else {
-      factor = (viewport.endRow-viewport.startRow+1)/sheet.getRowCount()
-      scrollFactor = viewport.startRow/sheet.getRowCount()
+      factor = (viewport.endRow - viewport.startRow + 1) / sheet.getRowCount()
+      scrollFactor = viewport.startRow / sheet.getRowCount()
       scrollbarSize = this.refs.scrollArea.el.getHeight()
     }
     let thumbSize = factor * scrollbarSize
@@ -95,12 +94,12 @@ export default class SheetScrollbar extends Component {
     }
   }
 
-  _onResize() {
+  _onResize () {
     // do a full rerender when window gets resized
     this.rerender()
   }
 
-  _onMousedownThumb(e) {
+  _onMousedownThumb (e) {
     e.stopPropagation()
     e.preventDefault()
     // console.log('_onMouseDownThumb', e)
@@ -113,14 +112,14 @@ export default class SheetScrollbar extends Component {
     }
   }
 
-  _onMousedownScrollArea(e) {
+  _onMousedownScrollArea (e) {
     // same as when mousedowning in the thumb
     this._onMousedownThumb(e)
     // plus moving the thumb to the start position
     this._onMoveThumb(e)
   }
 
-  _onMousedownPrev(e) {
+  _onMousedownPrev (e) {
     e.stopPropagation()
     e.preventDefault()
     const viewport = this.props.viewport
@@ -131,7 +130,7 @@ export default class SheetScrollbar extends Component {
     }
   }
 
-  _onMousedownNext(e) {
+  _onMousedownNext (e) {
     e.stopPropagation()
     e.preventDefault()
     const viewport = this.props.viewport
@@ -142,13 +141,13 @@ export default class SheetScrollbar extends Component {
     }
   }
 
-  _onMouseUp(e) {
+  _onMouseUp (e) {
     e.stopPropagation()
     e.preventDefault()
     this._relax()
   }
 
-  _onMoveThumb(e) {
+  _onMoveThumb (e) {
     e.stopPropagation()
     e.preventDefault()
     const viewport = this.props.viewport
@@ -157,32 +156,31 @@ export default class SheetScrollbar extends Component {
     // dragging the thumb instead of always using 0.5
     if (this._isHorizontal()) {
       let thumbSize = this.refs.thumb.el.getWidth()
-      let clientPos = e.clientX - 0.5*thumbSize
+      let clientPos = e.clientX - 0.5 * thumbSize
       let size = rect.width
       let pos = Math.max(0, Math.min(size, clientPos - rect.left))
       let factor = pos / size
-      let newCol = Math.floor(factor*viewport.M)
-      viewport.shift(0, newCol-viewport.startCol)
+      let newCol = Math.floor(factor * viewport.M)
+      viewport.shift(0, newCol - viewport.startCol)
     } else {
       let thumbSize = this.refs.thumb.el.getHeight()
-      let clientPos = e.clientY - 0.5*thumbSize
+      let clientPos = e.clientY - 0.5 * thumbSize
       let size = rect.height
       let pos = Math.max(0, Math.min(size, clientPos - rect.top))
       let factor = pos / size
-      let newRow = Math.floor(factor*viewport.N)
-      viewport.shift(newRow-viewport.startRow, 0)
+      let newRow = Math.floor(factor * viewport.N)
+      viewport.shift(newRow - viewport.startRow, 0)
     }
   }
 
-  _relax() {
+  _relax () {
     if (platform.inBrowser) {
       let _window = DefaultDOMElement.wrap(window)
       _window.off(this)
     }
   }
 
-  _onScroll() {
+  _onScroll () {
     this._updatePositions()
   }
-
 }

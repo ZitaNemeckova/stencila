@@ -1,12 +1,10 @@
 import { Command } from 'substance'
 
 export default class FunctionUsageCommand extends Command {
-
-  getCommandState({ selection, editorSession, surface }) {
-    // TODO: disable this command if there is no functionManager
+  getCommandState ({ selection, editorSession, surface }) {
     const doc = editorSession.getDocument()
+    // FIXME: removed FunctionManager
     const functionManager = surface ? surface.context.functionManager : null
-    // console.log('selection', selection)
     if (functionManager && selection.isPropertySelection()) {
       let nodeId = selection.getNodeId()
       let node = doc.get(nodeId)
@@ -20,7 +18,7 @@ export default class FunctionUsageCommand extends Command {
           return {
             disabled: false,
             functionName: match.name,
-            paramIndex: match.paramIndex,
+            paramIndex: match.paramIndex
           }
         }
       }
@@ -31,7 +29,7 @@ export default class FunctionUsageCommand extends Command {
     }
   }
 
-  _findFunction(nodes, cursorPos) {
+  _findFunction (nodes, cursorPos) {
     if (!nodes) return
 
     let candidate
@@ -42,7 +40,7 @@ export default class FunctionUsageCommand extends Command {
       // Currently we just restrict matching with a function name and the first bracket.
       if (node.type === 'function' && node.start <= cursorPos && node.start + node.name.length + 1 >= cursorPos) {
         let offset = cursorPos - node.start
-        if (!candidate || offset < candidate.offset ) {
+        if (!candidate || offset < candidate.offset) {
           // Param index
           let paramIndex
           node.args.forEach((arg, index) => {
@@ -53,7 +51,7 @@ export default class FunctionUsageCommand extends Command {
           candidate = {
             name: node.name,
             offset,
-            paramIndex,
+            paramIndex
           }
         }
       }

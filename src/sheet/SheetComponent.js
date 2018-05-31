@@ -13,14 +13,13 @@ import { getRange } from './sheetHelpers'
 import { clearValues } from './SheetManipulations'
 
 export default class SheetComponent extends CustomSurface {
-
-  constructor(...args) {
+  constructor (...args) {
     super(...args)
     this._nav = throttle(this._nav.bind(this), 50, { leading: true })
   }
 
   // TODO: we should think about using Component state instead
-  getInitialState() {
+  getInitialState () {
     const sheet = this.props.sheet
     this._clipboard = new SheetClipboard(this.context.editorSession)
     this._viewport = new SheetViewport(sheet, this)
@@ -43,7 +42,7 @@ export default class SheetComponent extends CustomSurface {
     return {}
   }
 
-  didMount() {
+  didMount () {
     super.didMount()
     const editorSession = this.context.editorSession
     editorSession.on('render', this._onSelectionChange, this, {
@@ -58,16 +57,16 @@ export default class SheetComponent extends CustomSurface {
     this._positionOverlays()
   }
 
-  dispose() {
+  dispose () {
     super.dispose()
     this.context.editorSession.off(this)
   }
 
-  didUpdate() {
+  didUpdate () {
     this._positionOverlays()
   }
 
-  render($$) {
+  render ($$) {
     const sheet = this._getSheet()
     const viewport = this._viewport
     let el = $$('div').addClass('sc-sheet')
@@ -99,32 +98,34 @@ export default class SheetComponent extends CustomSurface {
       this._renderColumnContextMenu($$),
       $$(DialogPanel).ref('dialog').addClass('sm-hidden'),
       $$(SheetScrollbar, {
-        sheet, viewport,
+        sheet,
+        viewport,
         axis: 'x'
       }).ref('scrollX'),
       $$(SheetScrollbar, {
-        sheet, viewport,
+        sheet,
+        viewport,
         axis: 'y'
       }).ref('scrollY')
     )
     return el
   }
 
-  getSheet() {
+  getSheet () {
     return this.props.sheet
   }
 
-  getSheetView() {
+  getSheetView () {
     return this.refs.sheetView
   }
 
   // data: {anchorRow, anchorCol, focusRow, focusCol}
-  getRectangleForRange(data) {
+  getRectangleForRange (data) {
     const rects = this._computeSelectionRects(data, 'range')
     return rects.selRect
   }
 
-  forceUpdate() {
+  forceUpdate () {
     this.refs.sheetView.update()
     this.refs.scrollX.rerender()
     this.refs.scrollY.rerender()
@@ -133,7 +134,7 @@ export default class SheetComponent extends CustomSurface {
 
   // called by SurfaceManager to render the selection plus setting the
   // DOM selection into a proper state
-  rerenderDOMSelection() {
+  rerenderDOMSelection () {
     // console.log('SheetComponent.rerenderDOMSelection()')
     this._positionSelection()
     // put the native focus into the keytrap so that we
@@ -141,11 +142,11 @@ export default class SheetComponent extends CustomSurface {
     this.refs.keytrap.el.focus()
   }
 
-  openColumnSettings(params) {
+  openColumnSettings (params) {
     this._showDialog('column-settings-dialog', params)
   }
 
-  _renderUnclickableOverlays($$) {
+  _renderUnclickableOverlays ($$) {
     let el = $$('div').addClass('se-unclickable-overlays')
     el.append(
       this._renderSelectionOverlay($$)
@@ -156,7 +157,7 @@ export default class SheetComponent extends CustomSurface {
     return el
   }
 
-  _renderClickableOverlays($$) {
+  _renderClickableOverlays ($$) {
     let el = $$('div').addClass('se-clickable-overlays')
     el.append(
       this.props.overlays
@@ -164,7 +165,7 @@ export default class SheetComponent extends CustomSurface {
     return el
   }
 
-  _renderSelectionOverlay($$) {
+  _renderSelectionOverlay ($$) {
     let el = $$('div').addClass('se-selection-overlay')
     el.append(
       $$('div').addClass('se-selection-anchor').ref('selAnchor').css('visibility', 'hidden'),
@@ -175,7 +176,7 @@ export default class SheetComponent extends CustomSurface {
     return el
   }
 
-  _renderRowContextMenu($$) {
+  _renderRowContextMenu ($$) {
     const configurator = this.context.configurator
     let rowMenu = $$(SheetContextMenu, {
       toolPanel: configurator.getToolPanel('row-context-menu')
@@ -185,7 +186,7 @@ export default class SheetComponent extends CustomSurface {
     return rowMenu
   }
 
-  _renderColumnContextMenu($$) {
+  _renderColumnContextMenu ($$) {
     const configurator = this.context.configurator
     let colMenu = $$(SheetContextMenu, {
       toolPanel: configurator.getToolPanel('column-context-menu')
@@ -201,24 +202,24 @@ export default class SheetComponent extends CustomSurface {
     NOTE: sheet.UUID is set in SheetDocument's constructor and is also used
           by SheetEngineAdapter
   */
-  _getCustomResourceId() {
+  _getCustomResourceId () {
     let sheet = this._getSheet()
     return sheet.UUID
   }
 
-  _getBoundingRect(rowIdx, colIdx) {
+  _getBoundingRect (rowIdx, colIdx) {
     return this.refs.sheetView.getBoundingRect(rowIdx, colIdx)
   }
 
-  _getCellComponent(rowIdx, colIdx) {
+  _getCellComponent (rowIdx, colIdx) {
     return this.refs.sheetView.getCellComponent(rowIdx, colIdx)
   }
 
-  _positionOverlays() {
+  _positionOverlays () {
     this._positionSelection()
   }
 
-  _positionSelection() {
+  _positionSelection () {
     const sel = this.context.editorSession.getSelection()
     if (sel.surfaceId === this.getId()) {
       const data = sel.data
@@ -231,24 +232,24 @@ export default class SheetComponent extends CustomSurface {
     }
   }
 
-  _positionRangeSelection(sel) {
+  _positionRangeSelection (sel) {
     const data = sel.data
     const rects = this._computeSelectionRects(data, data.type)
     const styles = this._computeSelectionStyles(sel, rects)
     this.refs.selRange.css(styles.range)
   }
 
-  _computeSelectionRects(data, type) {
+  _computeSelectionRects (data, type) {
     const viewport = this._getViewport()
     let styles = {
       anchor: { visibility: 'hidden' },
       range: { visibility: 'hidden' },
       columns: { visibility: 'hidden' },
-      rows: { visibility: 'hidden' },
+      rows: { visibility: 'hidden' }
     }
     let anchorRow, anchorCol
     let ulRow, ulCol, lrRow, lrCol
-    switch(type) {
+    switch (type) {
       case 'range': {
         anchorRow = data.anchorRow
         anchorCol = data.anchorCol
@@ -266,7 +267,7 @@ export default class SheetComponent extends CustomSurface {
         }
         // don't render the selection if it is completely outside of the viewport
         if (endRow < viewport.startRow || startRow > viewport.endRow ||
-            endCol < viewport.startCol || startCol > viewport.endCol ) {
+            endCol < viewport.startCol || startCol > viewport.endCol) {
           break
         }
         [ulRow, ulCol] = [Math.max(startRow, viewport.startRow), Math.max(startCol, viewport.startCol)]
@@ -308,13 +309,13 @@ export default class SheetComponent extends CustomSurface {
     let ulRect = this._getBoundingRect(ulRow, ulCol)
     let lrRect = this._getBoundingRect(lrRow, lrCol)
     let selRect
-    if (ulRect&&lrRect) {
+    if (ulRect && lrRect) {
       selRect = this._computeSelectionRectangle(ulRect, lrRect)
     }
     return { anchorRect, selRect, ulRect, lrRect}
   }
 
-  _computeSelectionStyles(data, { anchorRect, ulRect, lrRect }) {
+  _computeSelectionStyles (data, { anchorRect, ulRect, lrRect }) {
     let styles = {
       range: { visibility: 'hidden' },
       columns: { visibility: 'hidden' },
@@ -333,7 +334,7 @@ export default class SheetComponent extends CustomSurface {
     return styles
   }
 
-  _computeAnchorStyles(anchorRect) {
+  _computeAnchorStyles (anchorRect) {
     let styles = {
       anchor: { visibility: 'hidden' }
     }
@@ -351,7 +352,7 @@ export default class SheetComponent extends CustomSurface {
     return styles
   }
 
-  _computeSelectionRectangle(ulRect, lrRect) {
+  _computeSelectionRectangle (ulRect, lrRect) {
     let selRect = {}
     selRect.top = ulRect.top
     selRect.left = ulRect.left
@@ -360,7 +361,7 @@ export default class SheetComponent extends CustomSurface {
     return selRect
   }
 
-  _computeRangeStyles(ulRect, lrRect, mode) {
+  _computeRangeStyles (ulRect, lrRect, mode) {
     let styles = {
       range: { visibility: 'hidden' },
       columns: { visibility: 'hidden' },
@@ -394,46 +395,48 @@ export default class SheetComponent extends CustomSurface {
     return styles
   }
 
-  _hideSelection() {
+  _hideSelection () {
     this.refs.selAnchor.css('visibility', 'hidden')
     this.refs.selRange.css('visibility', 'hidden')
     this.refs.selColumns.css('visibility', 'hidden')
     this.refs.selRows.css('visibility', 'hidden')
   }
 
-  _getSelection() {
+  _getSelection () {
     return this.context.editorSession.getSelection().data || {}
   }
 
-  _scroll(deltaX, deltaY) {
+  _scroll (deltaX, deltaY) {
     return this._viewport.scroll(deltaX, deltaY)
   }
 
-  shiftSelection(dr, dc, shift) {
+  shiftSelection (dr, dc, shift) {
     let data = clone(this._getSelection())
     // TODO: move viewport if necessary
     let newFocusRow, newFocusCol
     if (!shift) {
-      [newFocusRow, newFocusCol] = this._clamped(data.anchorRow+dr, data.anchorCol+dc)
+      [newFocusRow, newFocusCol] = this._clamped(data.anchorRow + dr, data.anchorCol + dc)
       data.anchorRow = data.focusRow = newFocusRow
       data.anchorCol = data.focusCol = newFocusCol
     } else {
-      [newFocusRow, newFocusCol] = this._clamped(data.focusRow+dr, data.focusCol+dc)
+      [newFocusRow, newFocusCol] = this._clamped(data.focusRow + dr, data.focusCol + dc)
       data.focusRow = newFocusRow
       data.focusCol = newFocusCol
     }
     return this._createSelection(data)
   }
 
-  selectFirstCell() {
+  selectFirstCell () {
     return this._createSelection({
       type: 'range',
-      anchorRow: 0, anchorCol: 0,
-      focusRow: 0, focusCol: 0
+      anchorRow: 0,
+      anchorCol: 0,
+      focusRow: 0,
+      focusCol: 0
     })
   }
 
-  _createSelection(data) {
+  _createSelection (data) {
     return {
       type: 'custom',
       customType: 'sheet',
@@ -442,7 +445,7 @@ export default class SheetComponent extends CustomSurface {
     }
   }
 
-  _ensureFocusInView(newFocusRow, newFocusCol) {
+  _ensureFocusInView (newFocusRow, newFocusCol) {
     const viewport = this._viewport
     let dr = 0
     let dc = 0
@@ -451,7 +454,7 @@ export default class SheetComponent extends CustomSurface {
     } else if (newFocusRow > viewport.endRow) {
       dr = newFocusRow - viewport.endRow
     }
-    if(newFocusCol < viewport.startCol) {
+    if (newFocusCol < viewport.startCol) {
       dc = newFocusCol - viewport.startCol
     } else if (newFocusCol > viewport.endCol) {
       dc = newFocusCol - viewport.endCol
@@ -461,7 +464,7 @@ export default class SheetComponent extends CustomSurface {
     }
   }
 
-  _nav(dr, dc, shift) {
+  _nav (dr, dc, shift) {
     let newSel = this.shiftSelection(dr, dc, shift)
     // HACK: Now that the rows get rendered asynchronously
     // we need to wait with rendering the selection
@@ -472,30 +475,30 @@ export default class SheetComponent extends CustomSurface {
     }, 0)
   }
 
-  _clamped(rowIdx, colIdx) {
+  _clamped (rowIdx, colIdx) {
     const sheet = this._getSheet()
     const N = sheet.getRowCount()
     const M = sheet.getColumnCount()
     return [
-      Math.max(0, Math.min(N-1, rowIdx)),
-      Math.max(0, Math.min(M-1, colIdx)),
+      Math.max(0, Math.min(N - 1, rowIdx)),
+      Math.max(0, Math.min(M - 1, colIdx))
     ]
   }
 
-  _requestSelectionChange() {
+  _requestSelectionChange () {
     let sel = this._createSelection(clone(this._selectionData))
     this.send('requestSelectionChange', sel)
   }
 
-  _getSheet() {
+  _getSheet () {
     return this.props.sheet
   }
 
-  _getViewport() {
+  _getViewport () {
     return this._viewport
   }
 
-  _getTargetForEvent(e) {
+  _getTargetForEvent (e) {
     return this.refs.sheetView.getTargetForEvent(e)
   }
 
@@ -503,14 +506,14 @@ export default class SheetComponent extends CustomSurface {
     Get bounding rectangle. This is useful for controlling positioning
     of overlays, which happens outside of SheetComponent
   */
-  getCellRect(rowIdx, colIdx) {
+  getCellRect (rowIdx, colIdx) {
     let td = this._getCellComponent(rowIdx, colIdx)
     if (td) {
       return getRelativeBoundingRect(td.el, this.el)
     }
   }
 
-  _showRowMenu(e) {
+  _showRowMenu (e) {
     this._hideMenus()
     const rowMenu = this.refs.rowMenu
     let offset = this.el.getOffset()
@@ -521,7 +524,7 @@ export default class SheetComponent extends CustomSurface {
     })
   }
 
-  _showColumnMenu(e) {
+  _showColumnMenu (e) {
     this._hideMenus()
     const columnMenu = this.refs.columnMenu
     let offset = this.el.getOffset()
@@ -532,18 +535,18 @@ export default class SheetComponent extends CustomSurface {
     })
   }
 
-  _hideMenus() {
+  _hideMenus () {
     this.refs.rowMenu.css('display', 'none')
     this.refs.columnMenu.css('display', 'none')
   }
 
-  _clearSelection() {
+  _clearSelection () {
     const editorSession = this.context.editorSession
     let { startRow, startCol, endRow, endCol } = getRange(editorSession)
     clearValues(editorSession, startRow, startCol, endRow, endCol)
   }
 
-  _showDialog(dialogId, params) {
+  _showDialog (dialogId, params) {
     // TODO: as this component should potentially be embedded
     // we need to be able to use a
     this.refs.dialog.setProps({
@@ -552,13 +555,13 @@ export default class SheetComponent extends CustomSurface {
     this.refs.dialog.removeClass('sm-hidden')
   }
 
-  _hideDialog() {
+  _hideDialog () {
     this.refs.dialog.addClass('sm-hidden')
   }
 
   /* Event Handlers */
 
-  _onViewportScroll() {
+  _onViewportScroll () {
     this._hideMenus()
     this._hideDialog()
     setTimeout(() => {
@@ -566,7 +569,7 @@ export default class SheetComponent extends CustomSurface {
     })
   }
 
-  _onSelectionChange(sel) {
+  _onSelectionChange (sel) {
     if (sel.surfaceId !== this.getId()) {
       this._hideSelection()
     } else {
@@ -580,19 +583,19 @@ export default class SheetComponent extends CustomSurface {
     }
   }
 
-  _onDocumentChange(change) {
+  _onDocumentChange (change) {
     if (change.hasUpdated('data') || change.hasUpdated('columns')) {
       this.refs.sheetView.update()
     }
   }
 
-  _onWheel(e) {
+  _onWheel (e) {
     e.stopPropagation()
     e.preventDefault()
     this._scroll(e.deltaX, e.deltaY)
   }
 
-  _onMousedown(e) {
+  _onMousedown (e) {
     // console.log('_onMousedown', e)
     e.stopPropagation()
     e.preventDefault()
@@ -615,9 +618,9 @@ export default class SheetComponent extends CustomSurface {
 
     // TODO: move this into substance helper
     let isRightButton = false
-    if ("which" in e) {
+    if ('which' in e) {
       isRightButton = (e.which === 3)
-    } else if ("button" in e) {
+    } else if ('button' in e) {
       isRightButton = (e.button === 2)
     }
     if (isRightButton) {
@@ -674,7 +677,7 @@ export default class SheetComponent extends CustomSurface {
         }
       }
     } else {
-      switch(target.type) {
+      switch (target.type) {
         case 'cell': {
           this._isSelecting = true
           selData.type = 'range'
@@ -713,13 +716,13 @@ export default class SheetComponent extends CustomSurface {
     }
   }
 
-  _onMouseup(e) {
+  _onMouseup (e) {
     e.stopPropagation()
     e.preventDefault()
     this._isSelecting = false
   }
 
-  _onMousemove(e) {
+  _onMousemove (e) {
     if (this._isSelecting) {
       const sheetView = this.refs.sheetView
       const sel = this._selectionData
@@ -756,7 +759,7 @@ export default class SheetComponent extends CustomSurface {
     }
   }
 
-  _onDblclick(e) {
+  _onDblclick (e) {
     const sheetView = this.refs.sheetView
     let rowIdx = sheetView.getRowIndexForClientY(e.clientY)
     let colIdx = sheetView.getColumnIndexForClientX(e.clientX)
@@ -765,13 +768,13 @@ export default class SheetComponent extends CustomSurface {
     }
   }
 
-  _onContextMenu(e) {
+  _onContextMenu (e) {
     // console.log('_onContextMenu()', e)
     e.preventDefault()
     e.stopPropagation()
 
     let target = this._getTargetForEvent(e)
-    switch(target.type) {
+    switch (target.type) {
       case 'cell': {
         console.info('TODO: implement cell context menu?')
         break
@@ -792,14 +795,14 @@ export default class SheetComponent extends CustomSurface {
   /*
     Type into cell (replacing the existing content)
   */
-  _onInput() {
+  _onInput () {
     const value = this.refs.keytrap.val()
     this.send('editCell', value)
     // Clear keytrap after sending an action
     this.refs.keytrap.val('')
   }
 
-  _onKeyDown(e) {
+  _onKeyDown (e) {
     let handled = false
     switch (e.keyCode) {
       case keys.LEFT:
@@ -845,22 +848,21 @@ export default class SheetComponent extends CustomSurface {
     }
   }
 
-  _onCopy(e) {
+  _onCopy (e) {
     this._clipboard.onCopy(e)
   }
 
-  _onPaste(e) {
+  _onPaste (e) {
     this._clipboard.onPaste(e)
   }
 
-  _onCut(e) {
+  _onCut (e) {
     this._clipboard.onCut(e)
   }
-
 }
 
 class DialogPanel extends Component {
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-dialog-panel')
     if (this.props.dialogId) {
       let DialogClass = this.getComponent(this.props.dialogId)
@@ -875,7 +877,7 @@ class DialogPanel extends Component {
     return el
   }
 
-  _onMousedown() {
+  _onMousedown () {
     this.el.addClass('sm-hidden')
   }
 }

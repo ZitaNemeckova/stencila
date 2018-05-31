@@ -1,15 +1,14 @@
 import { EventEmitter, uuid } from 'substance'
 import { KJUR } from 'jsrsasign'
-import { Engine, JsContext, MiniContext, ContextHttpClient } from 'stencila-engine'
-import FunctionManager from '../function/FunctionManager'
+import { MiniContext } from 'stencila-engine'
+import { JavascriptContext } from 'stencila-js'
 
 /**
  * Each Stencila process has a single instance of the `Host` class which
- * orchestrates instances of executions contexts, including those in 
+ * orchestrates instances of executions contexts, including those in
  * in other processses.
  */
 export default class Host extends EventEmitter {
-
   constructor (options = {}) {
     super()
 
@@ -30,7 +29,7 @@ export default class Host extends EventEmitter {
     /**
      * Stencila hosts known to this host.
      * A `Map` of `url` to `key`
-     * 
+     *
      * @type {Map}
      */
     this._hosts = new Map()
@@ -38,11 +37,10 @@ export default class Host extends EventEmitter {
     /**
      * Execution environments provided by other hosts.
      * A `Map` of `url` to `[environ]`
-     * 
+     *
      * @type {Map}
      */
     this._environs = new Map()
-
 
     this._environ = 'local'
 
@@ -82,15 +80,7 @@ export default class Host extends EventEmitter {
      *
      * @type {Engine}
      */
-    this._engine = options.engine || new Engine({ host: this })
-
-    /**
-     * Manages functions imported from libraries
-     *
-     * @type {FunctionManager}
-     */
-    this._functionManager = new FunctionManager()
-
+    this._engine = options.engine
   }
 
   // For compatability with Stencila Host Manifest API (as is stored in this._peers)
@@ -98,16 +88,16 @@ export default class Host extends EventEmitter {
   /**
    * The URL of this internal host
    */
-  get url() {
+  get url () {
     return 'internal'
   }
 
   /**
    * The resource types supported by this internal host
    */
-  get types() {
+  get types () {
     return {
-      JsContext: { name: 'JsContext' },
+      JavascriptContext: { name: 'JavascriptContext' },
       MiniContext: { name: 'MiniContext' }
     }
   }
@@ -145,14 +135,14 @@ export default class Host extends EventEmitter {
   /**
    * Get the resource instances (e.g. contexts, storers) managed by this host
    */
-  get instances() {
+  get instances () {
     return this._instances
   }
 
   /**
    * Get the execution contexts managed by this host
    */
-  get contexts() {
+  get contexts () {
     return this._contexts
   }
 
@@ -161,13 +151,6 @@ export default class Host extends EventEmitter {
    */
   get engine () {
     return this._engine
-  }
-
-  /**
-   * Get this host's function manager
-   */
-  get functionManager() {
-    return this._functionManager
   }
 
   /**
@@ -217,7 +200,7 @@ export default class Host extends EventEmitter {
         }
       }
     }).then(() => {
-      // Run the engine after connecting to any peer hosts so that they are connected 
+      // Run the engine after connecting to any peer hosts so that they are connected
       // (and have registered functions) before the engine attempts
       // to create contexts for external languages like R, SQL etc
       this._engine.run(10) // Refresh interval of 10ms
@@ -297,15 +280,15 @@ export default class Host extends EventEmitter {
    *
    * @param {number} interval - The interval (seconds) between discovery attempts
    */
-  discoverHosts (interval=10) {
+  discoverHosts (interval = 10) {
     this.options.discover = interval
     if (interval >= 0) {
-      for (let port=2000; port<=2100; port+=10) {
+      for (let port = 2000; port <= 2100; port += 10) {
         this.registerHost(`http://127.0.0.1:${port}`, null, true)
       }
       if (interval > 0) {
         this.discoverHosts(-1) // Ensure any existing interval is turned off
-        this._discoverHostsInterval = setInterval(() => this.discoverHosts(0), interval*1000)
+        this._discoverHostsInterval = setInterval(() => this.discoverHosts(0), interval * 1000)
       }
     } else {
       if (this._discoverHostsInterval) {
@@ -329,27 +312,32 @@ export default class Host extends EventEmitter {
       this.emit('instance:created')
     }
 
-    // Look for type in peer hosts
-    for (let [url, manifest] of this._peers) {
-      for (let spec of Object.values(manifest.types)) {
-        if (spec.name === type) {
-          return this._post(url, '/' + type, args).then(id => {
-            let Client
-            if (spec.client === 'ContextHttpClient') Client = ContextHttpClient
-            else throw new Error(`Unsupported type: ${spec.client}`)
+    // FIXME  need to bring this back
+    // ATM I am trying to get to minimal viable solution
+    // Will replace this heavy client-side Host with a lighter
+    // proxy and deal with multi-peers on the server side
 
-            let instance = new Client(this, url, id)
-            _register(id, url, type, instance)
-            return {id, instance}
-          })
-        }
-      }
-    }
+    // Look for type in peer hosts
+    // for (let [url, manifest] of this._peers) {
+    //   for (let spec of Object.values(manifest.types)) {
+    //     if (spec.name === type) {
+    //       return this._post(url, '/' + type, args).then(id => {
+    //         let Client
+    //         if (spec.client === 'ContextHttpClient') Client = ContextHttpClient
+    //         else throw new Error(`Unsupported type: ${spec.client}`)
+
+    //         let instance = new Client(this, url, id)
+    //         _register(id, url, type, instance)
+    //         return {id, instance}
+    //       })
+    //     }
+    //   }
+    // }
 
     // Fallback to providing an in-browser instances of resources where available
     let instance
-    if (type === 'JsContext') {
-      instance = new JsContext()
+    if (type === 'JavascriptContext') {
+      instance = new JavascriptContext(this, uuid())
     } else if (type === 'MiniContext') {
       // MiniContext requires a pointer to this host so that
       // it can obtain other contexts for executing functions
@@ -372,80 +360,83 @@ export default class Host extends EventEmitter {
   /**
    * Create an execution context for a particular language
    */
-  createContext(language) {
-    const context = this._contexts[language]
-    if (context) return context
-    else {
-      const type = {
-        'js': 'JsContext',
-        'mini': 'MiniContext',
-        'node': 'NodeContext',
-        'py': 'PythonContext',
-        'pyjp': 'JupyterContext',
-        'r': 'RContext',
-        'sql': 'SqliteContext'
-      }[language]
+  createContext (language) {
+    // FIXME: contexts/proxies should be created during configuration not on-the-fly
+    // for dynamic load-balancing use a server side Host
 
-      const options = {
-        'pyjp': {
-          language: 'python'
-        }
-      }[language] || {}
+    // const context = this._contexts[language]
+    // if (context) return context
+    // else {
+    //   const type = {
+    //     'js': 'JsContext',
+    //     'mini': 'MiniContext',
+    //     'node': 'NodeContext',
+    //     'py': 'PythonContext',
+    //     'pyjp': 'JupyterContext',
+    //     'r': 'RContext',
+    //     'sql': 'SqliteContext'
+    //   }[language]
 
-      if (!type) {
-        return Promise.reject(new Error(`Unable to create an execution context for language ${language}`))
-      } else {
-        const promise = this.create(type, options).then((result) => {
-          if (result instanceof Error) {
-            // Unable to create so set the cached context promise to null
-            // so a retry is performed next time this method is called
-            // (at which time another peer that provides the context may be available)
-            this._contexts[language] = null
-            return result
-          } else {
-            // Get a list of fuctions from the context so that `FunctionManager` can
-            // dispatch a `call` operation to the context if necessary. Implemented
-            // optimistically i.e. will not fail if the context does not implement `libraries`
-            const context = result.instance
-            if (typeof context.libraries === 'function') {
-              return context.libraries().then((libraries) => {
-                this._functionManager.importLibraries(context, libraries)
-                return context
-              }).catch((error) => {
-                console.log(error) // eslint-disable-line
-              })
-            } else {
-              return context
-            }
-          }
-        })
-        this._contexts[language] = promise
-        return promise
-      }
-    }
+    //   const options = {
+    //     'pyjp': {
+    //       language: 'python'
+    //     }
+    //   }[language] || {}
+
+    //   if (!type) {
+    //     return Promise.reject(new Error(`Unable to create an execution context for language ${language}`))
+    //   } else {
+    //     const promise = this.create(type, options).then((result) => {
+    //       if (result instanceof Error) {
+    //         // Unable to create so set the cached context promise to null
+    //         // so a retry is performed next time this method is called
+    //         // (at which time another peer that provides the context may be available)
+    //         this._contexts[language] = null
+    //         return result
+    //       } else {
+    //         // Get a list of fuctions from the context so that `FunctionManager` can
+    //         // dispatch a `call` operation to the context if necessary. Implemented
+    //         // optimistically i.e. will not fail if the context does not implement `libraries`
+    //         const context = result.instance
+    //         if (typeof context.libraries === 'function') {
+    //           return context.libraries().then((libraries) => {
+    //             this._functionManager.importLibraries(context, libraries)
+    //             return context
+    //           }).catch((error) => {
+    //             console.log(error) // eslint-disable-line
+    //           })
+    //         } else {
+    //           return context
+    //         }
+    //       }
+    //     })
+    //     this._contexts[language] = promise
+    //     return promise
+    //   }
+    // }
   }
 
-  _get(host, path) {
+  _get (host, path) {
     const token = this._token(host)
     return this._request('GET', host + path, null, token)
   }
 
-  _post(host, path, data) {
+  _post (host, path, data) {
     const token = this._token(host)
     return this._request('POST', host + path, data, token)
   }
 
-  _put(host, path, data) {
+  _put (host, path, data) {
     const token = this._token(host)
     return this._request('PUT', host + path, data || {}, token)
   }
 
-  _delete(host, path) {
+  _delete (host, path) {
     const token = this._token(host)
     return this._request('DELETE', host + path, null, token)
   }
 
-  _token(url) {
+  _token (url) {
     const host = this._hosts.get(url)
     if (!host) return
     const key = host.key
@@ -461,7 +452,7 @@ export default class Host extends EventEmitter {
 
   _request (method, url, data, token) {
     var XMLHttpRequest
-    if (typeof window === 'undefined') XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest
+    if (typeof window === 'undefined') XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
     else XMLHttpRequest = window.XMLHttpRequest
 
     return new Promise((resolve, reject) => {
@@ -486,7 +477,8 @@ export default class Host extends EventEmitter {
         if (request.status >= 200 && request.status < 400) {
           resolve(result)
         } else {
-          reject({
+          // FIXME: 'standard' suggests to reject with Error only
+          reject({ // eslint-disable-line prefer-promise-reject-errors
             status: request.status,
             body: result
           })

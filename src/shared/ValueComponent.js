@@ -2,13 +2,12 @@ import { Component } from 'substance'
 
 export default
 class ValueComponent extends Component {
-
-  render($$) {
+  render ($$) {
     const registry = this.context.componentRegistry
     let el = $$('div').addClass('sc-cell-value')
-    
+
     let valueType = this.props.type
-    let ValueDisplay = registry.get('value:'+valueType)
+    let ValueDisplay = registry.get('value:' + valueType)
     // Use the `ObjectValueComponent` by default since most of the time
     // types without a registered component will be 'extended' types (i.e objects with a type property)
     if (!ValueDisplay) ValueDisplay = registry.get('value:object')
@@ -28,5 +27,4 @@ class ValueComponent extends Component {
 
     return el
   }
-
 }

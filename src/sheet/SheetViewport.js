@@ -2,8 +2,7 @@ import { EventEmitter } from 'substance'
 import getBoundingRect from '../util/getBoundingRect'
 
 export default class SheetViewport extends EventEmitter {
-
-  constructor(sheet, container) {
+  constructor (sheet, container) {
     super()
 
     this._sheet = sheet
@@ -29,23 +28,23 @@ export default class SheetViewport extends EventEmitter {
     this.P = 50
   }
 
-  getContainerWidth() {
+  getContainerWidth () {
     let el = this._container.el
     return el ? el.getWidth() : 0
   }
 
-  getContainerHeight() {
+  getContainerHeight () {
     let el = this._container.el
     return el ? el.getHeight() : 0
   }
 
-  getContainerRect() {
+  getContainerRect () {
     let el = this._container.el
     return el ? getBoundingRect(el) : {}
   }
 
   // scrolling in a virtual grid of squares
-  update(viewport) {
+  update (viewport) {
     let { startRow, startCol } = viewport
     let dr = startRow - this.startRow
     let dc = startCol - this.startCol
@@ -57,27 +56,27 @@ export default class SheetViewport extends EventEmitter {
   }
 
   // scrolling in a virtual grid of squares
-  scroll(dx, dy) {
+  scroll (dx, dy) {
     const N = this.N
     const M = this.M
     let oldX = this.x
     let oldY = this.y
-    let oldC = Math.floor(oldX/this.D)
-    let oldR = Math.floor(oldY/this.D)
-    let newX = Math.max(0, Math.min(M*this.D, oldX+dx))
-    let newY = Math.max(0, Math.min(N*this.D, oldY+dy))
+    let oldC = Math.floor(oldX / this.D)
+    let oldR = Math.floor(oldY / this.D)
+    let newX = Math.max(0, Math.min(M * this.D, oldX + dx))
+    let newY = Math.max(0, Math.min(N * this.D, oldY + dy))
     this.x = newX
     this.y = newY
-    let newC = Math.floor(newX/this.D)
-    let newR = Math.floor(newY/this.D)
+    let newC = Math.floor(newX / this.D)
+    let newR = Math.floor(newY / this.D)
     let dr = newR - oldR
     let dc = newC - oldC
     // stop if there is no change
     if (!dr && !dc) return
     const oldStartRow = this.startRow
     const oldStartCol = this.startCol
-    const newStartRow = Math.max(0, Math.min(N-1, oldStartRow+dr))
-    const newStartCol = Math.max(0, Math.min(M-1, oldStartCol+dc))
+    const newStartRow = Math.max(0, Math.min(N - 1, oldStartRow + dr))
+    const newStartCol = Math.max(0, Math.min(M - 1, oldStartCol + dc))
     dr = newStartRow - oldStartRow
     dc = newStartCol - oldStartCol
     if (dr || dc) {
@@ -87,7 +86,7 @@ export default class SheetViewport extends EventEmitter {
     }
   }
 
-  shift(dr, dc) {
+  shift (dr, dc) {
     // just make sure that these are integers
     dr = Math.floor(dr)
     dc = Math.floor(dc)
@@ -96,40 +95,39 @@ export default class SheetViewport extends EventEmitter {
     let N = sheet.getRowCount()
     let oldStartRow = this.startRow
     let oldStartCol = this.startCol
-    let newStartRow = Math.max(0, Math.min(oldStartRow+dr, N-1))
-    let newStartCol = Math.max(0, Math.min(oldStartCol+dc, M-1))
+    let newStartRow = Math.max(0, Math.min(oldStartRow + dr, N - 1))
+    let newStartCol = Math.max(0, Math.min(oldStartCol + dc, M - 1))
     dr = newStartRow - oldStartRow
     dc = newStartCol - oldStartCol
     if (dr || dc) {
       this.startCol = newStartCol
       this.startRow = newStartRow
-      this.x = newStartCol*this.D
-      this.y = newStartRow*this.D
+      this.x = newStartCol * this.D
+      this.y = newStartRow * this.D
       this.emit('scroll', dr, dc)
     }
   }
 
-  getTotalHeight() {
-    return this.N*this.D
+  getTotalHeight () {
+    return this.N * this.D
   }
 
-  getTotalWidth() {
-    return this.M*this.D
+  getTotalWidth () {
+    return this.M * this.D
   }
 
-  get N() {
+  get N () {
     return this._sheet.getRowCount()
   }
 
-  get M() {
+  get M () {
     return this._sheet.getColumnCount()
   }
 
-  toJSON() {
+  toJSON () {
     return {
       startRow: this.startRow,
       startCol: this.startCol
     }
   }
-
 }

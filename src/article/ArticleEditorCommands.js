@@ -4,8 +4,7 @@ import { qualifiedId } from 'stencila-engine'
 import { setCellLanguage, insertCell, insertReproFig } from './ArticleManipulations'
 
 export class SetLanguageCommand extends Command {
-
-  getCommandState({ selection, editorSession }) {
+  getCommandState ({ selection, editorSession }) {
     let doc = editorSession.getDocument()
     if (selection.isNodeSelection()) {
       let nodeId = selection.getNodeId()
@@ -23,7 +22,7 @@ export class SetLanguageCommand extends Command {
     return { disabled: true }
   }
 
-  execute({ editorSession, commandState }) {
+  execute ({ editorSession, commandState }) {
     let { cellId, newLanguage, disabled } = commandState
     if (!disabled) {
       setCellLanguage(editorSession, cellId, newLanguage)
@@ -32,8 +31,7 @@ export class SetLanguageCommand extends Command {
 }
 
 export class ToggleAllCodeCommand extends Command {
-
-  getCommandState() {
+  getCommandState () {
     // Note: this is always enabled
     return {
       disabled: false,
@@ -44,12 +42,12 @@ export class ToggleAllCodeCommand extends Command {
   /*
     Returns all cell components found in the document
   */
-  _getCellComponents(params) {
+  _getCellComponents (params) {
     let editor = params.editorSession.getEditor()
     return editor.findAll('.sc-cell')
   }
 
-  execute(params) {
+  execute (params) {
     let cellComponents = this._getCellComponents(params)
     let sel = params.editorSession.getSelection()
     cellComponents.forEach((cellComponent) => {
@@ -61,10 +59,8 @@ export class ToggleAllCodeCommand extends Command {
   }
 }
 
-
 export class HideCellCodeCommand extends Command {
-
-  getCommandState({ selection, editorSession }) {
+  getCommandState ({ selection, editorSession }) {
     let doc = editorSession.getDocument()
     if (selection.isNodeSelection()) {
       let nodeId = selection.getNodeId()
@@ -79,7 +75,7 @@ export class HideCellCodeCommand extends Command {
     return { disabled: true }
   }
 
-  execute({ commandState, editorSession }) {
+  execute ({ commandState, editorSession }) {
     const { cellId } = commandState
     let editor = editorSession.getEditor()
     let cellComponent = editor.find(`.sc-cell[data-id=${cellId}]`)
@@ -89,10 +85,8 @@ export class HideCellCodeCommand extends Command {
   }
 }
 
-
 export class ForceCellOutputCommand extends Command {
-
-  getCommandState({ selection, editorSession }) {
+  getCommandState ({ selection, editorSession }) {
     let doc = editorSession.getDocument()
     if (selection.isNodeSelection()) {
       let nodeId = selection.getNodeId()
@@ -112,14 +106,14 @@ export class ForceCellOutputCommand extends Command {
     return { disabled: true }
   }
 
-  _getCellComponent(editorSession, cellId) {
+  _getCellComponent (editorSession, cellId) {
     let editor = editorSession.getEditor()
     if (editor) {
       return editor.find(`.sc-cell[data-id=${cellId}]`)
     }
   }
 
-  execute({ commandState, editorSession }) {
+  execute ({ commandState, editorSession }) {
     const { cellId } = commandState
     let cellComponent = this._getCellComponent(editorSession, cellId)
     cellComponent.extendState({
@@ -130,8 +124,7 @@ export class ForceCellOutputCommand extends Command {
 }
 
 export class InsertCellCommand extends InsertNodeCommand {
-
-  execute({ editorSession, commandState }) {
+  execute ({ editorSession, commandState }) {
     const { disabled } = commandState
     if (!disabled) {
       insertCell(editorSession)
@@ -140,19 +133,16 @@ export class InsertCellCommand extends InsertNodeCommand {
 }
 
 export class InsertReproFigCommand extends InsertNodeCommand {
-
-  execute({ commandState, editorSession}) {
+  execute ({commandState, editorSession}) {
     const { disabled } = commandState
     if (!disabled) {
       insertReproFig(editorSession)
     }
   }
-
 }
 
 export class RunCellCommand extends Command {
-
-  getCommandState({ editorSession, selection }) {
+  getCommandState ({ editorSession, selection }) {
     const doc = editorSession.getDocument()
     if (selection.isPropertySelection() || selection.isNodeSelection()) {
       let nodeId = selection.getNodeId()
@@ -174,14 +164,14 @@ export class RunCellCommand extends Command {
     }
   }
 
-  execute(params, context) {
+  execute (params, context) {
     const { docId, cellId } = params.commandState
     const engine = context.host.engine
     const id = qualifiedId(docId, cellId)
     engine._allowRunningCellAndPredecessors(id)
   }
 
-  static get name() {
+  static get name () {
     return 'run-cell-code'
   }
 }

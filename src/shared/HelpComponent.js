@@ -2,8 +2,7 @@ import { Component } from 'substance'
 import FunctionHelpComponent from './FunctionHelpComponent'
 
 export default class HelpComponent extends Component {
-
-  render($$) {
+  render ($$) {
     const page = this.props.page
     const [section, name] = page.split('/')
 
@@ -22,7 +21,7 @@ export default class HelpComponent extends Component {
     return el
   }
 
-  _closeContext() {
+  _closeContext () {
     this.send('toggleHelp')
   }
 }

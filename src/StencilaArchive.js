@@ -4,13 +4,12 @@ import ArticleLoader from './article/ArticleLoader'
 import SheetLoader from './sheet/SheetLoader'
 
 export default class StencilaArchive extends TextureArchive {
-
-  constructor(storage, buffer, context) {
+  constructor (storage, buffer, context) {
     super(storage, buffer)
     this._context = context
   }
 
-  load(archiveId) {
+  load (archiveId) {
     return super.load(archiveId)
       .then(() => {
         this._fixNameCollisions()
@@ -18,7 +17,7 @@ export default class StencilaArchive extends TextureArchive {
       })
   }
 
-  _loadDocument(type, record, sessions) {
+  _loadDocument (type, record, sessions) {
     let context = this._context
     let editorSession
     switch (type) {
@@ -42,7 +41,7 @@ export default class StencilaArchive extends TextureArchive {
     return editorSession
   }
 
-  _fixNameCollisions() {
+  _fixNameCollisions () {
     let manifestSession = this._sessions['manifest']
     let entries = manifestSession.getDocument().getDocumentEntries()
     // TODO: this should also be done in DAR in general
@@ -63,7 +62,7 @@ export default class StencilaArchive extends TextureArchive {
     })
   }
 
-  _exportDocument(type, session, sessions) {
+  _exportDocument (type, session, sessions) {
     switch (type) {
       case 'article': {
         // FIXME: hard-coded, and thus bad
@@ -77,7 +76,7 @@ export default class StencilaArchive extends TextureArchive {
         console.info('saving jats', res.dom.getNativeElement())
         // TODO: bring back pretty printing (currently messes up CDATA content)
         let xmlStr = prettyPrintXML(res.dom)
-        //let xmlStr = res.dom.serialize()
+        // let xmlStr = res.dom.serialize()
         return xmlStr
       }
       case 'sheet': {
@@ -93,13 +92,13 @@ export default class StencilaArchive extends TextureArchive {
   /*
     We use the name of the first document
   */
-  getTitle() {
+  getTitle () {
     let entries = this.getDocumentEntries()
     let firstEntry = entries[0]
     return firstEntry.name || firstEntry.id
   }
 
-  getDocumentType(documentId) {
+  getDocumentType (documentId) {
     let editorSession = this.getEditorSession(documentId)
     let doc = editorSession.getDocument()
     return doc.documentType
@@ -107,7 +106,7 @@ export default class StencilaArchive extends TextureArchive {
 
   // added `info.action = 'addDocument'`
   // TODO: this should go into substance.PersistedDocumentArchive
-  _addDocumentRecord(documentId, type, name, path) {
+  _addDocumentRecord (documentId, type, name, path) {
     this._sessions.manifest.transaction(tx => {
       let documents = tx.find('documents')
       let docEntry = tx.createElement('document', { id: documentId }).attr({
@@ -121,7 +120,7 @@ export default class StencilaArchive extends TextureArchive {
 
   // added `info.action = 'renameDocument'`
   // TODO: this should go into substance.PersistedDocumentArchive
-  renameDocument(documentId, name) {
+  renameDocument (documentId, name) {
     this._sessions.manifest.transaction(tx => {
       let docEntry = tx.find(`#${documentId}`)
       docEntry.attr({name})

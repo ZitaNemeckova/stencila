@@ -4,8 +4,7 @@ import FormulaEditor from './FormulaEditor'
 const { BodyScrollPane } = BodyScrollPanePackage
 
 export default class FormulaBar extends FormulaEditor {
-
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-formula-bar').append(
       $$('div').addClass('se-function-icon').append(
         $$('em').append(
@@ -18,8 +17,7 @@ export default class FormulaBar extends FormulaEditor {
     return el
   }
 
-  _renderScrollPane($$) {
+  _renderScrollPane ($$) {
     return $$(BodyScrollPane)
   }
-
 }

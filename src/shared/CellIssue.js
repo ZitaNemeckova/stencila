@@ -1,14 +1,14 @@
 class CellIssue {
-  constructor(cellId, type, msg, severity, data) {
+  constructor (cellId, type, msg, severity, data) {
     this.cellId = cellId
     this.type = type
     this.msg = msg
 
-    if(!cellId || !type || !msg) {
+    if (!cellId || !type || !msg) {
       return new Error('cellId, type and message are mandatory')
     }
 
-    if(severity !== null && typeof severity === 'object') {
+    if (severity !== null && typeof severity === 'object') {
       data = severity
       severity = 0
     }
@@ -17,23 +17,23 @@ class CellIssue {
     this.data = data
   }
 
-  get key() {
+  get key () {
     return `${this.type}#${this.cellId}`
   }
 
-  get message() {
+  get message () {
     return this.msg
   }
 
-  isError() {
+  isError () {
     return this.severity === 2
   }
 
-  isWarning() {
+  isWarning () {
     return this.severity === 1
   }
 
-  isCellIssue() {
+  isCellIssue () {
     return true
   }
 }

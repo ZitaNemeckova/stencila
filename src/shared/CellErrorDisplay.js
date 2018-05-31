@@ -3,8 +3,7 @@ import { getCellState } from './cellHelpers'
 
 export default
 class CellErrorDisplay extends Component {
-
-  render($$) {
+  render ($$) {
     const cell = this.props.cell
     const cellState = getCellState(cell)
     let el = $$('div').addClass('sc-cell-error-display')
@@ -15,7 +14,7 @@ class CellErrorDisplay extends Component {
     return el
   }
 
-  renderErrors($$) {
+  renderErrors ($$) {
     const cell = this.props.cell
     const cellState = getCellState(cell)
 
@@ -32,5 +31,4 @@ class CellErrorDisplay extends Component {
     }
     return errorsEl
   }
-
 }

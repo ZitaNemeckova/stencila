@@ -1,28 +1,28 @@
-export function insertRows(editorSession, pos, count) {
+export function insertRows (editorSession, pos, count) {
   editorSession.transaction((tx) => {
     _createRowsAt(tx.getDocument(), pos, count)
   }, { action: 'insertRows', pos, count })
 }
 
-export function insertCols(editorSession, pos, count) {
+export function insertCols (editorSession, pos, count) {
   editorSession.transaction((tx) => {
     _createColumnsAt(tx.getDocument(), pos, count)
   }, { action: 'insertCols', pos, count })
 }
 
-export function deleteRows(editorSession, pos, count) {
+export function deleteRows (editorSession, pos, count) {
   editorSession.transaction((tx) => {
-    _deleteRows(tx.getDocument(), pos, pos+count-1)
+    _deleteRows(tx.getDocument(), pos, pos + count - 1)
   }, { action: 'deleteRows', pos, count })
 }
 
-export function deleteCols(editorSession, pos, count) {
+export function deleteCols (editorSession, pos, count) {
   editorSession.transaction((tx) => {
-    _deleteCols(tx.getDocument(), pos, pos+count-1)
+    _deleteCols(tx.getDocument(), pos, pos + count - 1)
   }, { action: 'deleteCols', pos, count })
 }
 
-export function setCell(editorSession, row, col, val) {
+export function setCell (editorSession, row, col, val) {
   editorSession.transaction(tx => {
     let sheet = tx.getDocument()
     let cell = sheet.getCell(row, col)
@@ -43,10 +43,10 @@ export function setCell(editorSession, row, col, val) {
   }, { action: 'setCell' })
 }
 
-export function setValues(editorSession, startRow, startCol, vals) {
+export function setValues (editorSession, startRow, startCol, vals) {
   let n = vals.length
   let m = vals[0].length
-  ensureSize(editorSession, startRow+n, startCol+m)
+  ensureSize(editorSession, startRow + n, startCol + m)
   editorSession.transaction(tx => {
     let sheet = tx.getDocument()
     _setValues(sheet, startRow, startCol, vals)
@@ -57,49 +57,49 @@ export function setValues(editorSession, startRow, startCol, vals) {
         type: 'range',
         anchorRow: startRow,
         anchorCol: startCol,
-        focusRow: startRow+n-1,
-        focusCol: startCol+m-1
+        focusRow: startRow + n - 1,
+        focusCol: startCol + m - 1
       }
     })
   }, { action: 'setValues' })
 }
 
-export function clearValues(editorSession, startRow, startCol, endRow, endCol) {
+export function clearValues (editorSession, startRow, startCol, endRow, endCol) {
   editorSession.transaction(tx => {
     // Note: the selection remains the same
     _clearValues(tx.getDocument(), startRow, startCol, endRow, endCol)
   })
 }
 
-export function setColumnTypes(editorSession, startCol, endCol, type) {
+export function setColumnTypes (editorSession, startCol, endCol, type) {
   editorSession.transaction(tx => {
     _setColumnTypes(tx.getDocument(), startCol, endCol, type)
   }, { action: 'setColumnTypes' })
 }
 
-export function setCellTypes(editorSession, startRow, startCol, endRow, endCol, type) {
+export function setCellTypes (editorSession, startRow, startCol, endRow, endCol, type) {
   editorSession.transaction(tx => {
     _setCellTypesForRange(tx.getDocument(), startRow, startCol, endRow, endCol, type)
   }, { action: 'setCellTypes' })
 }
 
-export function ensureSize(editorSession, nrows, ncols) {
+export function ensureSize (editorSession, nrows, ncols) {
   let sheet = editorSession.getDocument()
   let [_nrows, _ncols] = sheet.getDimensions()
   if (_ncols < ncols) {
-    insertCols(editorSession, _ncols, ncols-_ncols)
+    insertCols(editorSession, _ncols, ncols - _ncols)
   }
   if (_nrows < nrows) {
-    insertRows(editorSession, _nrows, nrows-_nrows)
+    insertRows(editorSession, _nrows, nrows - _nrows)
   }
 }
 
-function _setValues(sheet, startRow, startCol, vals) {
+function _setValues (sheet, startRow, startCol, vals) {
   for (let i = 0; i < vals.length; i++) {
     let row = vals[i]
     for (let j = 0; j < row.length; j++) {
       let val = row[j]
-      let cell = sheet.getCell(startRow+i, startCol+j)
+      let cell = sheet.getCell(startRow + i, startCol + j)
       if (cell) {
         cell.textContent = val
       }
@@ -107,7 +107,7 @@ function _setValues(sheet, startRow, startCol, vals) {
   }
 }
 
-function _clearValues(sheet, startRow, startCol, endRow, endCol) {
+function _clearValues (sheet, startRow, startCol, endRow, endCol) {
   for (let rowIdx = startRow; rowIdx <= endRow; rowIdx++) {
     for (let colIdx = startCol; colIdx <= endCol; colIdx++) {
       let cell = sheet.getCell(rowIdx, colIdx)
@@ -116,7 +116,7 @@ function _clearValues(sheet, startRow, startCol, endRow, endCol) {
   }
 }
 
-function _setCellTypesForRange(sheet, startRow, startCol, endRow, endCol, type) {
+function _setCellTypesForRange (sheet, startRow, startCol, endRow, endCol, type) {
   for (let rowIdx = startRow; rowIdx <= endRow; rowIdx++) {
     for (let colIdx = startCol; colIdx <= endCol; colIdx++) {
       let cell = sheet.getCell(rowIdx, colIdx)
@@ -125,14 +125,14 @@ function _setCellTypesForRange(sheet, startRow, startCol, endRow, endCol, type) 
   }
 }
 
-function _setColumnTypes(sheet, startCol, endCol, type) {
+function _setColumnTypes (sheet, startCol, endCol, type) {
   for (let colIdx = startCol; colIdx <= endCol; colIdx++) {
     let cell = sheet.getColumnMeta(colIdx)
     cell.attr('type', type)
   }
 }
 
-function _createRowsAt(sheet, rowIdx, n) {
+function _createRowsAt (sheet, rowIdx, n) {
   let $$ = sheet.createElement.bind(sheet)
   const M = sheet.getColumnCount()
   let data = sheet._getData()
@@ -148,7 +148,7 @@ function _createRowsAt(sheet, rowIdx, n) {
   }
 }
 
-function _deleteRows(sheet, startRow, endRow) {
+function _deleteRows (sheet, startRow, endRow) {
   let data = sheet._getData()
   for (let rowIdx = endRow; rowIdx >= startRow; rowIdx--) {
     let row = data.getChildAt(rowIdx)
@@ -160,14 +160,14 @@ function _deleteRows(sheet, startRow, endRow) {
   }
 }
 
-function _deleteCols(sheet, startCol, endCol) {
+function _deleteCols (sheet, startCol, endCol) {
   let data = sheet._getData()
   let N = sheet.getRowCount()
   let columns = sheet._getColumns()
   for (let colIdx = endCol; colIdx >= startCol; colIdx--) {
     columns.removeAt(colIdx)
   }
-  for (let rowIdx = N-1; rowIdx >= 0; rowIdx--) {
+  for (let rowIdx = N - 1; rowIdx >= 0; rowIdx--) {
     let row = data.getChildAt(rowIdx)
     for (let colIdx = endCol; colIdx >= startCol; colIdx--) {
       const cellId = row.getChildAt(colIdx).id
@@ -177,7 +177,7 @@ function _deleteCols(sheet, startCol, endCol) {
   }
 }
 
-function _createColumnsAt(sheet, colIdx, n) {
+function _createColumnsAt (sheet, colIdx, n) {
   // TODO: we need to add columns' meta, too
   // for each existing row insert new cells
   let $$ = sheet.createElement.bind(sheet)
@@ -189,7 +189,7 @@ function _createColumnsAt(sheet, colIdx, n) {
     let col = $$('col').attr('type', 'any')
     columns.insertBefore(col, colAfter)
   }
-  while(it.hasNext()) {
+  while (it.hasNext()) {
     let row = it.next()
     let cellAfter = row.getChildAt(colIdx)
     for (let j = 0; j < n; j++) {

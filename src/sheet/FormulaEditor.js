@@ -3,14 +3,13 @@ import CodeEditor from '../shared/CodeEditor'
 const { BodyScrollPane } = BodyScrollPanePackage
 
 export default class FormulaEditor extends Component {
-
-  render($$) {
+  render ($$) {
     let el = $$('div').addClass('sc-formula-editor')
     el.append(this._renderCodeEditor($$, 'formula-editor'))
     return el
   }
 
-  _renderCodeEditor($$, editorId) {
+  _renderCodeEditor ($$, editorId) {
     const node = this.props.context.node
     const configurator = this.props.context.configurator
     let scrollPane = this._renderScrollPane($$)
@@ -29,24 +28,21 @@ export default class FormulaEditor extends Component {
     )
   }
 
-  _renderScrollPane($$) {
+  _renderScrollPane ($$) {
     return $$(BodyScrollPaneForSheetComponent).ref('scrollPane')
   }
 
-  getChildContext() {
+  getChildContext () {
     return this.props.context
   }
 
-  getSurfaceId() {
+  getSurfaceId () {
     return this.refs.cellEditor.getSurfaceId()
   }
-
 }
 
 class BodyScrollPaneForSheetComponent extends BodyScrollPane {
-
-  getContentElement() {
+  getContentElement () {
     return this.getElement()
   }
-
 }

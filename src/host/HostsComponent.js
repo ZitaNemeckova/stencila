@@ -1,8 +1,7 @@
 import { Component } from 'substance'
 
 export default class HostsComponent extends Component {
-
-  constructor(...args) {
+  constructor (...args) {
     super(...args)
 
     let host = this.context.host
@@ -11,7 +10,7 @@ export default class HostsComponent extends Component {
     host.on('peers:changed', () => this.rerender())
   }
 
-  getInitialState() {
+  getInitialState () {
     let host = this.context.host
     return {
       hostAddShow: false,
@@ -19,9 +18,9 @@ export default class HostsComponent extends Component {
     }
   }
 
-  render($$) {
+  render ($$) {
     let host = this.context.host
-    
+
     // Generate a list of available enviroments from the
     // registered hosts
     let availableEnvirons = {}
@@ -67,7 +66,7 @@ export default class HostsComponent extends Component {
           if (domain === '127.0.0.1') domain = 'localhost'
           name = domain
           let port = match[3]
-          if(port) name += ':' + port
+          if (port) name += ':' + port
         }
         let nameEl = $$('div').addClass('se-name').append(name)
 
@@ -88,7 +87,7 @@ export default class HostsComponent extends Component {
         $$('div').addClass('se-message').text(`No registered hosts provide ${selectedEnviron}`)
       )
     }
-    
+
     /*
     hostsEl.append(
       $$('div').addClass('se-host-add').append(
@@ -111,7 +110,7 @@ export default class HostsComponent extends Component {
       )
     )
     */
-   
+
     let peersEl = $$('div').addClass('se-peers').append(
       $$('span').addClass('se-label').append('Connected execution environments:')
     )
@@ -125,7 +124,7 @@ export default class HostsComponent extends Component {
           if (domain === '127.0.0.1') domain = 'localhost'
           name = domain
           let port = match[3]
-          if(port) name += ':' + port
+          if (port) name += ':' + port
         }
         name += '/' + (manifest.environs && manifest.environs[0] && manifest.environs[0].id)
         let nameEl = $$('div').addClass('se-name').append(name)
@@ -150,20 +149,20 @@ export default class HostsComponent extends Component {
     return el
   }
 
-  _onEnvironChange() {
+  _onEnvironChange () {
     let host = this.context.host
     const environSelect = this.refs.environSelect
     const environ = environSelect.val()
     host.selectEnviron(environ)
   }
 
-  _onHostClick(url, otherHost) {
+  _onHostClick (url, otherHost) {
     let host = this.context.host
     if (!otherHost.selected) host.selectHost(url)
     else host.deselectHost(url)
   }
 
-  _onHostAdd() {
+  _onHostAdd () {
     const urlInput = this.refs.urlInput
     const url = urlInput.val()
     const keyInput = this.refs.keyInput
@@ -172,7 +171,7 @@ export default class HostsComponent extends Component {
     host.registerHost(url, key)
   }
 
-  _onDiscoverToggle() {
+  _onDiscoverToggle () {
     let host = this.context.host
     if (this.state.discover) {
       host.discoverHosts(-1)
@@ -182,5 +181,4 @@ export default class HostsComponent extends Component {
       this.setState({discover: true})
     }
   }
-
 }

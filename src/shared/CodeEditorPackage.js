@@ -2,7 +2,7 @@ import { Document, TextNode, BasePackage } from 'substance'
 
 export default {
   name: 'CodeEditor',
-  configure(config) {
+  configure (config) {
     // TODO this should be better reusable
     // this configurations are necessary
     config.defineSchema({

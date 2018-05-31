@@ -2,7 +2,7 @@ import { Component, Toolbar} from 'substance'
 import SheetIssuesCounter from './SheetIssuesCounter'
 
 class SheetStatusBar extends Component {
-  render($$) {
+  render ($$) {
     const configurator = this.context.configurator
     let el = $$('div').addClass('sc-sheet-statusbar').append(
       $$(SheetIssuesCounter, {}).ref('counter'),

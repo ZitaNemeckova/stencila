@@ -3,7 +3,7 @@ import SheetPackage from './SheetPackage'
 import SheetSchema from './SheetSchema'
 
 export default {
-  load(xml, context) {
+  load (xml, context) {
     let configurator = new Configurator()
     configurator.import(SheetPackage)
     let importer = configurator.createImporter(SheetSchema.getName())

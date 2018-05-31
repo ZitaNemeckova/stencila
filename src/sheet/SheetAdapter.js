@@ -5,8 +5,7 @@ import { getSource, getLang } from '../shared/cellHelpers'
   Connects Engine and Sheet.
 */
 export default class SheetAdapter extends DocumentAdapter {
-
-  _initialize() {
+  _initialize () {
     const doc = this.doc
     const engine = this.engine
     // TODO: also provide column data
@@ -26,13 +25,13 @@ export default class SheetAdapter extends DocumentAdapter {
     this.engine.on('update', this._onEngineUpdate, this)
   }
 
-  _onDocumentChange(change) {
+  _onDocumentChange (change) {
     const doc = this.doc
     const model = this.model
 
     let action = change.info.action
     let matrix, cellData
-    switch(action) {
+    switch (action) {
       case 'insertRows': {
         const { pos, count } = change.info
         matrix = doc.getCellMatrix()
@@ -54,7 +53,7 @@ export default class SheetAdapter extends DocumentAdapter {
         cellData = []
         const N = matrix.length
         for (let i = 0; i < N; i++) {
-          cellData.push(matrix[i].slice(pos, pos+count).map(_getCellData))
+          cellData.push(matrix[i].slice(pos, pos + count).map(_getCellData))
         }
         model.insertCols(pos, cellData)
         break
@@ -102,24 +101,24 @@ export default class SheetAdapter extends DocumentAdapter {
     }
   }
 
-  _getCellNodes() {
+  _getCellNodes () {
     return this.doc.getCellMatrix()
   }
 
-  _getColumnNodes() {
+  _getColumnNodes () {
     return this.doc.findAll('columns > col')
   }
 
-  _isCell(node) {
+  _isCell (node) {
     return node.type === 'cell'
   }
 
-  static connect(engine, editorSession, id, name) {
+  static connect (engine, editorSession, id, name) {
     return new SheetAdapter(engine, editorSession, id, name)
   }
 }
 
-function _getCellData(cell) {
+function _getCellData (cell) {
   return {
     id: cell.id,
     lang: getLang(cell),
@@ -127,15 +126,15 @@ function _getCellData(cell) {
   }
 }
 
-function _getColumnName(column) {
+function _getColumnName (column) {
   return column.getAttribute('name')
 }
 
-function _getColumnType(column) {
+function _getColumnType (column) {
   return column.getAttribute('type')
 }
 
-function _getColumnData(column) {
+function _getColumnData (column) {
   return {
     name: _getColumnName(column),
     type: _getColumnType(column)

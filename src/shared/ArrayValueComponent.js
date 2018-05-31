@@ -2,7 +2,7 @@ import { Component } from 'substance'
 
 export default
 class ArrayValueComponent extends Component {
-  render($$) {
+  render ($$) {
     let value = this.props.value
     let el = $$('div').addClass('sc-array-value')
     value.data.forEach((item) => {

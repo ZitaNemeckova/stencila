@@ -3,17 +3,19 @@ import { getRange } from './sheetHelpers'
 import { insertRows, deleteRows, insertCols, deleteCols, setCellTypes, setColumnTypes } from './SheetManipulations'
 
 class RowsCommand extends Command {
-  getCommandState(params) {
+  getCommandState (params) {
     const sel = params.selection
     if (sel && sel.isCustomSelection() && sel.customType === 'sheet') {
       let data = sel.data
       if (data.type === 'rows') {
         let startRow = Math.min(data.anchorRow, data.focusRow)
         let endRow = Math.max(data.anchorRow, data.focusRow)
-        let nrows = endRow-startRow+1
+        let nrows = endRow - startRow + 1
         return {
           disabled: false,
-          startRow, endRow, nrows
+          startRow,
+          endRow,
+          nrows
         }
       }
     }
@@ -25,17 +27,19 @@ class RowsCommand extends Command {
 }
 
 class ColsCommand extends Command {
-  getCommandState(params) {
+  getCommandState (params) {
     const sel = params.selection
     if (sel && sel.isCustomSelection() && sel.customType === 'sheet') {
       let data = sel.data
       if (data.type === 'columns') {
         let startCol = Math.min(data.anchorCol, data.focusCol)
         let endCol = Math.max(data.anchorCol, data.focusCol)
-        let ncolumns = endCol-startCol+1
+        let ncolumns = endCol - startCol + 1
         return {
           disabled: false,
-          startCol, endCol, ncolumns
+          startCol,
+          endCol,
+          ncolumns
         }
       }
     }
@@ -47,21 +51,21 @@ class ColsCommand extends Command {
 }
 
 class ColumnMetaCommand extends Command {
-
-  getCommandState(params) {
+  getCommandState (params) {
     const sel = params.selection
     if (sel && sel.isCustomSelection() && sel.customType === 'sheet') {
       let data = sel.data
       if (data.type === 'columns') {
         let startCol = Math.min(data.anchorCol, data.focusCol)
         let endCol = Math.max(data.anchorCol, data.focusCol)
-        let ncolumns = endCol-startCol+1
+        let ncolumns = endCol - startCol + 1
         if (ncolumns === 1) {
           let colIdx = startCol
           let node = params.surface.getSheet().getColumnMeta(colIdx)
           return {
             disabled: false,
-            colIdx, node
+            colIdx,
+            node
           }
         }
       }
@@ -71,11 +75,10 @@ class ColumnMetaCommand extends Command {
       disabled: true
     }
   }
-
 }
 
 export class InsertRowsAbove extends RowsCommand {
-  execute(params) {
+  execute (params) {
     const editorSession = params.editorSession
     const commandState = params.commandState
     const pos = commandState.startRow
@@ -85,7 +88,7 @@ export class InsertRowsAbove extends RowsCommand {
 }
 
 export class InsertRowsBelow extends RowsCommand {
-  execute(params) {
+  execute (params) {
     const editorSession = params.editorSession
     const commandState = params.commandState
     const pos = commandState.endRow + 1
@@ -95,7 +98,7 @@ export class InsertRowsBelow extends RowsCommand {
 }
 
 export class DeleteRows extends RowsCommand {
-  execute(params) {
+  execute (params) {
     const editorSession = params.editorSession
     const commandState = params.commandState
     const start = commandState.startRow
@@ -107,7 +110,7 @@ export class DeleteRows extends RowsCommand {
 }
 
 export class InsertColumnsLeft extends ColsCommand {
-  execute(params) {
+  execute (params) {
     const editorSession = params.editorSession
     const commandState = params.commandState
     const pos = commandState.startCol
@@ -117,7 +120,7 @@ export class InsertColumnsLeft extends ColsCommand {
 }
 
 export class InsertColumnsRight extends ColsCommand {
-  execute(params) {
+  execute (params) {
     const editorSession = params.editorSession
     const commandState = params.commandState
     const pos = commandState.endCol + 1
@@ -127,7 +130,7 @@ export class InsertColumnsRight extends ColsCommand {
 }
 
 export class DeleteColumns extends ColsCommand {
-  execute(params) {
+  execute (params) {
     const editorSession = params.editorSession
     const commandState = params.commandState
     const start = commandState.startCol
@@ -139,7 +142,7 @@ export class DeleteColumns extends ColsCommand {
 }
 
 export class OpenColumnSettings extends ColumnMetaCommand {
-  execute(params) {
+  execute (params) {
     // NOTE: when the OpenColumnSettings command is active
     // params.surface is the corresponding SheetComponent
     params.surface.openColumnSettings(params)
@@ -149,14 +152,13 @@ export class OpenColumnSettings extends ColumnMetaCommand {
 }
 
 export class SetLanguageCommand extends Command {
-
-  getCommandState({ selection, editorSession }) {
+  getCommandState ({ selection, editorSession }) {
     if (selection.isNull() || !(selection.isCustomSelection() && selection.customType === 'sheet')) {
       return { disabled: true }
     }
     let doc = editorSession.getDocument()
     const { anchorRow, anchorCol } = selection.data
-    if(anchorRow === -1 || anchorCol === -1) {
+    if (anchorRow === -1 || anchorCol === -1) {
       return { disabled: true }
     }
     let anchorCell = doc.getCell(anchorRow, anchorCol)
@@ -170,7 +172,7 @@ export class SetLanguageCommand extends Command {
     return state
   }
 
-  execute({ editorSession, commandState }) {
+  execute ({ editorSession, commandState }) {
     let { cellId, newLanguage, disabled } = commandState
     if (!disabled) {
       editorSession.transaction((tx) => {
@@ -182,8 +184,7 @@ export class SetLanguageCommand extends Command {
 }
 
 export class SetTypeCommand extends Command {
-
-  getCommandState({ selection, editorSession }) {
+  getCommandState ({ selection, editorSession }) {
     if (selection.isNull() || !(selection.isCustomSelection() && selection.customType === 'sheet')) {
       return { disabled: true }
     }
@@ -194,7 +195,7 @@ export class SetTypeCommand extends Command {
     }
     let { anchorRow, anchorCol } = selection.data
     const selectionType = selection.data.type
-    if(selectionType === 'columns') {
+    if (selectionType === 'columns') {
       let columnMeta = doc.getColumnMeta(anchorCol)
       let columnType = columnMeta.attr('type') || 'Auto'
       state = {
@@ -221,12 +222,12 @@ export class SetTypeCommand extends Command {
     return state
   }
 
-  execute({ editorSession, commandState, selection }) {
+  execute ({ editorSession, commandState, selection }) {
     let { newType, disabled } = commandState
     const selectionType = selection.data.type
     if (!disabled) {
       const range = getRange(editorSession)
-      if(selectionType === 'range' || selectionType === 'rows') {
+      if (selectionType === 'range' || selectionType === 'rows') {
         setCellTypes(editorSession, range.startRow, range.startCol, range.endRow, range.endCol, newType)
       } else if (selectionType === 'columns') {
         setColumnTypes(editorSession, range.startCol, range.endCol, newType)
@@ -236,8 +237,7 @@ export class SetTypeCommand extends Command {
 }
 
 export class SelectAllCommand extends Command {
-
-  getCommandState(params) {
+  getCommandState (params) {
     let sel = params.selection
     if (sel.isNull() || !sel.isCustomSelection() || sel.customType !== 'sheet') {
       return { disabled: true }
@@ -245,7 +245,7 @@ export class SelectAllCommand extends Command {
     return { disabled: false }
   }
 
-  execute(params) {
+  execute (params) {
     const editorSession = params.editorSession
     const sheet = editorSession.getDocument()
     const sel = params.selection

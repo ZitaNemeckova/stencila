@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 import { registerSchema, BasePackage } from 'substance'
 import SheetDocument from './SheetDocument'
 import SheetSchema from './SheetSchema'
@@ -30,7 +31,7 @@ import CodeHighlightComponent from '../shared/CodeHighlightComponent'
 export default {
   name: 'Sheet',
 
-  configure(config) {
+  configure (config) {
     // registers model nodes and a converter
     registerSchema(config, SheetSchema, SheetDocument, {
       ImporterClass: SheetDocumentImporter
@@ -258,11 +259,11 @@ export default {
       en: 'Column Settings'
     })
 
-    config.addIcon('toggle-errors', {'fontawesome': 'fa-times-circle' })
-    config.addIcon('toggle-warnings', {'fontawesome': 'fa-warning' })
-    config.addIcon('toggle-info', {'fontawesome': 'fa-info-circle' })
-    config.addIcon('toggle-failed', {'fontawesome': 'fa-times' })
-    config.addIcon('toggle-passed', {'fontawesome': 'fa-check' })
+    config.addIcon('toggle-errors', {'fontawesome': 'fa-times-circle'})
+    config.addIcon('toggle-warnings', {'fontawesome': 'fa-warning'})
+    config.addIcon('toggle-info', {'fontawesome': 'fa-info-circle'})
+    config.addIcon('toggle-failed', {'fontawesome': 'fa-times'})
+    config.addIcon('toggle-passed', {'fontawesome': 'fa-check'})
 
     config.addLabel('toggle-errors', 'Errors')
     config.addLabel('toggle-warnings', 'Warnings')
@@ -270,12 +271,12 @@ export default {
     config.addLabel('toggle-failed', 'Test: failed')
     config.addLabel('toggle-passed', 'Test: passed')
 
-    config.addIcon('string-cell-type', {'fontawesome': 'fa-align-left' })
-    config.addIcon('number-cell-type', {'fontawesome': 'fa-hashtag' })
-    config.addIcon('integer-cell-type', {'fontawesome': 'fa-hashtag' })
-    config.addIcon('boolean-cell-type', {'fontawesome': 'fa-check-square-o' })
+    config.addIcon('string-cell-type', {'fontawesome': 'fa-align-left'})
+    config.addIcon('number-cell-type', {'fontawesome': 'fa-hashtag'})
+    config.addIcon('integer-cell-type', {'fontawesome': 'fa-hashtag'})
+    config.addIcon('boolean-cell-type', {'fontawesome': 'fa-check-square-o'})
 
-    config.addLabel('function-reference',' Function Reference')
+    config.addLabel('function-reference', ' Function Reference')
 
     config.addLabel('title:error', {
       en: 'Error'
@@ -287,12 +288,12 @@ export default {
       en: 'Info'
     })
 
-    config.addIcon('test-failed', {'fontawesome': 'fa-times' })
-    config.addIcon('test-passed', {'fontawesome': 'fa-check' })
+    config.addIcon('test-failed', {'fontawesome': 'fa-times'})
+    config.addIcon('test-passed', {'fontawesome': 'fa-check'})
 
-    config.addIcon('context-close', {'fontawesome': 'fa-times' })
+    config.addIcon('context-close', {'fontawesome': 'fa-times'})
 
-    config.addIcon('function-helper', {'fontawesome': 'fa-question-circle' })
+    config.addIcon('function-helper', {'fontawesome': 'fa-question-circle'})
     config.addLabel('function-examples', {
       en: 'Example Usage'
     })

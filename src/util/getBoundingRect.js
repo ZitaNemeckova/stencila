@@ -1,4 +1,4 @@
-export default function getBoundingRect(el) {
+export default function getBoundingRect (el) {
   let _rect = el.getNativeElement().getBoundingClientRect()
   return {
     top: _rect.top,

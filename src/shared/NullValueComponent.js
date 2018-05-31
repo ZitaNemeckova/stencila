@@ -2,7 +2,7 @@ import { Component } from 'substance'
 
 export default
 class NullValueComponent extends Component {
-  render($$) {
+  render ($$) {
     return $$('div').addClass('sc-null-value').text('null')
   }
 }

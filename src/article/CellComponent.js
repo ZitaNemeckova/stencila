@@ -19,8 +19,7 @@ const SHOW_ERROR_DELAY = 500
 
 export default
 class CellComponent extends NodeComponent {
-
-  constructor(...args) {
+  constructor (...args) {
     super(...args)
 
     this.handleActions({
@@ -30,20 +29,20 @@ class CellComponent extends NodeComponent {
     })
   }
 
-  getInitialState() {
+  getInitialState () {
     return {
       hideCode: false,
       forceOutput: false
     }
   }
 
-  _renderStatus($$) {
+  _renderStatus ($$) {
     const cellState = getCellState(this.props.node)
     let statusName = cellState ? cellStateToString(cellState.status) : 'unknown'
     return $$('div').addClass(`se-status sm-${statusName}`)
   }
 
-  render($$) {
+  render ($$) {
     const cell = this.props.node
     const cellState = getCellState(cell)
     let el = $$('div').addClass('sc-cell')
@@ -79,9 +78,9 @@ class CellComponent extends NodeComponent {
         $$('button').append(
           this._renderStatus($$)
         )
-        .addClass('se-show-code')
-        .attr('title', 'Show Code')
-        .on('click', this._showCode)
+          .addClass('se-show-code')
+          .attr('title', 'Show Code')
+          .on('click', this._showCode)
       )
     }
 
@@ -90,7 +89,7 @@ class CellComponent extends NodeComponent {
         status: cellState.status,
         value: cellState.value,
         errors: cellState.errors,
-        showOutput: this._showOutput(),
+        showOutput: this._showOutput()
       }).ref('valueDisplay')
       el.append(valueDisplay)
     }
@@ -100,7 +99,7 @@ class CellComponent extends NodeComponent {
   /*
     Move this into an overlay, shown depending on app state
   */
-  _renderEllipsis($$) {
+  _renderEllipsis ($$) {
     let Button = this.getComponent('button')
     let el = $$('div').addClass('se-ellipsis')
     let configurator = this.context.editorSession.getConfigurator()
@@ -122,11 +121,11 @@ class CellComponent extends NodeComponent {
     return el
   }
 
-  getExpression() {
+  getExpression () {
     return this.refs.expressionEditor.getContent()
   }
 
-  _renderMenu($$) {
+  _renderMenu ($$) {
     let menuEl = $$('div').addClass('se-menu')
     menuEl.append(
       this._renderToggleCode($$),
@@ -135,7 +134,7 @@ class CellComponent extends NodeComponent {
     return menuEl
   }
 
-  _getBlackListedCommands() {
+  _getBlackListedCommands () {
     const commandGroups = this.context.commandGroups
     let result = []
     ;['annotations', 'insert', 'prompt', 'text-types'].forEach((name) => {
@@ -146,7 +145,7 @@ class CellComponent extends NodeComponent {
     return result
   }
 
-  _showCode() {
+  _showCode () {
     this.extendState({
       hideCode: false
     })
@@ -156,30 +155,30 @@ class CellComponent extends NodeComponent {
     Generally output is shown when cell is not a definition, however it can be
     enforced
   */
-  _showOutput() {
+  _showOutput () {
     return !this._isDefinition() || this.state.forceOutput
   }
 
-  _isDefinition() {
+  _isDefinition () {
     const cellState = getCellState(this.props.node)
     return cellState && cellState.hasOutput()
   }
 
-  _toggleMenu() {
+  _toggleMenu () {
     const containerEditor = this._getParentSurface()
     this.context.editorSession.setSelection({
       type: 'node',
       containerId: containerEditor.getContainerId(),
       surfaceId: containerEditor.getSurfaceId(),
-      nodeId: this.props.node.id,
+      nodeId: this.props.node.id
     })
   }
 
-  _onExecute() {
+  _onExecute () {
     this.context.cellEngine.recompute(this.props.node.id)
   }
 
-  _onBreak() {
+  _onBreak () {
     this.context.editorSession.transaction((tx) => {
       tx.selection = this._afterNode()
       tx.insertBlockNode({
@@ -188,12 +187,12 @@ class CellComponent extends NodeComponent {
     })
   }
 
-  _onEscapeFromCodeEditor(event) {
+  _onEscapeFromCodeEditor (event) {
     event.stopPropagation()
     this.send('escape')
   }
 
-  _afterNode() {
+  _afterNode () {
     // TODO: not too happy about how difficult it is to set the selection
     const node = this.props.node
     const containerEditor = this._getParentSurface()
@@ -206,16 +205,14 @@ class CellComponent extends NodeComponent {
     }
   }
 
-  _getParentSurface() {
+  _getParentSurface () {
     const isolatedNode = this.context.isolatedNodeComponent
     return isolatedNode.getParentSurface()
   }
-
 }
 
 class ValueDisplay extends Component {
-
-  shouldRerender(newProps) {
+  shouldRerender (newProps) {
     return (
       (newProps.showOutput !== this.props.showOutput) ||
       (newProps.status !== this.props.status) ||
@@ -224,7 +221,7 @@ class ValueDisplay extends Component {
     )
   }
 
-  willReceiveProps(newProps) {
+  willReceiveProps (newProps) {
     let newStatus = newProps.status
     if (newStatus === OK) {
       this._cachedValue = newProps.value
@@ -235,7 +232,7 @@ class ValueDisplay extends Component {
     }
   }
 
-  didUpdate() {
+  didUpdate () {
     const errors = this.props.errors
     if (errors && errors.length > 0) {
       let token = this._token
@@ -253,7 +250,7 @@ class ValueDisplay extends Component {
     }
   }
 
-  render($$) {
+  render ($$) {
     const status = this.props.status
     const value = this.props.value
     const showOutput = this.props.showOutput
@@ -262,15 +259,14 @@ class ValueDisplay extends Component {
     // whenever there are errors we will renew the token
     // so that an already triggered updater can be canceled
     this._token = Math.random()
-    if(status === BROKEN || status === FAILED) {
+    if (status === BROKEN || status === FAILED) {
       // rendering the last value as hidden to achieve a bit more resilient spacing
       if (this._cachedValue && showOutput) {
         el.append(
           $$(ValueComponent, this._cachedValue).ref('cachedValue').css('visibility', 'hidden')
         )
-      }
       // alternatively if there is a cached error, use that to reserve the space
-      else if (this._cachedError) {
+      } else if (this._cachedError) {
         el.append(
           $$('div').addClass('se-error').append(
             getErrorMessage(this._cachedError)
@@ -289,9 +285,8 @@ class ValueDisplay extends Component {
         el.append(
           $$(ValueComponent, value).ref('value')
         )
-      }
       // to have a less jumpy experience, we show the last valid value grey'd out
-      else if (this._cachedValue) {
+      } else if (this._cachedValue) {
         el.append(
           $$(ValueComponent, this._cachedValue).ref('value').addClass('sm-pending')
         )

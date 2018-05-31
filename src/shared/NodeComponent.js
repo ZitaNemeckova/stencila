@@ -7,32 +7,31 @@ import { Component } from 'substance'
  */
 export default
 class NodeComponent extends Component {
-
-  didMount() {
+  didMount () {
     _startListening(this, this.props.node)
   }
 
-  dispose() {
+  dispose () {
     _stopListening(this, this.props.node)
   }
 
-  willReceiveProps(newProps) {
+  willReceiveProps (newProps) {
     if (newProps.node !== this.props.node) {
       _stopListening(this, this.props.node)
       _startListening(this, newProps.node)
     }
   }
 
-  getNode() {
+  getNode () {
     return this.props.node
   }
 
-  _onNodeChanged() {
+  _onNodeChanged () {
     this.rerender()
   }
 }
 
-function _startListening(self, node) {
+function _startListening (self, node) {
   if (node) {
     const editorSession = self.context.editorSession
     editorSession.on('render', self._onNodeChanged, self, {
@@ -44,7 +43,7 @@ function _startListening(self, node) {
   }
 }
 
-function _stopListening(self, node) {
+function _stopListening (self, node) {
   if (node) {
     const editorSession = self.context.editorSession
     editorSession.off('render', self._onNodeChanged, self)

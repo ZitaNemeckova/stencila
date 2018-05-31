@@ -4,22 +4,21 @@ import ValueComponent from '../shared/ValueComponent'
 import { getError, getValue, getErrorMessage } from '../shared/cellHelpers'
 
 export default class SheetCellComponent extends NodeComponent {
-
-  didMount() {
+  didMount () {
     super.didMount()
 
     const cell = this.props.node
     cell.on('issue:changed', this.rerender, this)
   }
 
-  dispose() {
+  dispose () {
     super.dispose()
 
     const cell = this.props.node
     cell.off(this)
   }
 
-  render($$) {
+  render ($$) {
     const cell = this.props.node
     let el = $$('div').addClass('sc-sheet-cell')
     let error = getError(cell)
@@ -38,11 +37,11 @@ export default class SheetCellComponent extends NodeComponent {
     return el
   }
 
-  _renderContent($$, cell) {
+  _renderContent ($$, cell) {
     const text = cell.text()
     const isExpressionCell = isExpression(text)
     const value = getValue(cell)
-    if(isExpressionCell) {
+    if (isExpressionCell) {
       const valueEl = $$(ValueComponent, value).ref('value')
       return $$('div').addClass('sc-text-content').append(valueEl)
     } else {
@@ -50,7 +49,7 @@ export default class SheetCellComponent extends NodeComponent {
     }
   }
 
-  getContent() {
+  getContent () {
     return this.props.node.getText()
   }
 }

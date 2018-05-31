@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 import {
   EditorPackage as TextureEditorPackage
 } from 'substance-texture'
@@ -32,7 +33,7 @@ import RunAllCommand from '../shared/RunAllCommand'
 
 export default {
   name: 'editor',
-  configure(config) {
+  configure (config) {
     config.import(TextureEditorPackage)
     config.addComponent('cell', CellComponent)
     config.addComponent('code-highlight', CodeHighlightComponent)
@@ -71,9 +72,9 @@ export default {
     })
     config.addTool('function-usage', FunctionUsageTool)
 
-    config.addIcon('function-helper', {'fontawesome': 'fa-question-circle' })
+    config.addIcon('function-helper', {'fontawesome': 'fa-question-circle'})
 
-    config.addIcon('insert-cell', { 'fontawesome': 'fa-plus-square' })
+    config.addIcon('insert-cell', {'fontawesome': 'fa-plus-square'})
 
     config.addLabel('function-examples', {
       en: 'Example Usage'
@@ -196,10 +197,9 @@ export default {
     config.addLabel('set-r', 'R')
     config.addLabel('set-sql', 'SQL')
 
-    config.addIcon('ellipsis', { 'fontawesome': 'fa-ellipsis-v' })
-    config.addIcon('test-failed', {'fontawesome': 'fa-times' })
-    config.addIcon('test-passed', {'fontawesome': 'fa-check' })
-
+    config.addIcon('ellipsis', {'fontawesome': 'fa-ellipsis-v'})
+    config.addIcon('test-failed', {'fontawesome': 'fa-times'})
+    config.addIcon('test-passed', {'fontawesome': 'fa-check'})
 
     config.addLabel('show-all-code', 'Show All Code')
     config.addLabel('hide-all-code', 'Hide All Code')
@@ -220,6 +220,5 @@ export default {
     config.addKeyboardShortcut('CommandOrControl+Alt+L', { command: 'show-all-code' })
     config.addKeyboardShortcut('CommandOrControl+Alt+O', { command: 'hide-all-code' })
     config.addKeyboardShortcut('Shift+Enter', { command: 'run-cell-code' })
-
   }
 }

@@ -1,7 +1,7 @@
 import Host from '../host/Host'
 import getQueryStringParam from '../util/getQueryStringParam'
 
-export default function setupStencilaContext() {
+export default function setupStencilaContext () {
   // Stencila hosts (for requesting external execution contexts etc)
   let hosts = []
   // Use the origin as a remote Stencila Host?
@@ -19,8 +19,5 @@ export default function setupStencilaContext() {
   const discover = parseFloat(getQueryStringParam('discover') || window.STENCILA_DISCOVER || '-1')
   // Instantiate and initialise the host
   const host = new Host({ hosts, discover })
-  return {
-    host, 
-    functionManager: host.functionManager
-  }
+  return { host }
 }

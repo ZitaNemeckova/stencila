@@ -4,20 +4,19 @@ const DEFAULT_COLUMN_WIDTH = 100
 const getColumnLabel = tableHelpers.getColumnLabel
 
 class SheetColumnHeader extends NodeComponent {
-
-  didMount() {
+  didMount () {
     super.didMount()
     const cell = this.props.node
     cell.on('issue:changed', this.rerender, this)
   }
 
-  dispose() {
+  dispose () {
     super.dispose()
     const cell = this.props.node
     cell.off(this)
   }
 
-  render($$) {
+  render ($$) {
     const colIdx = this.props.colIdx
 
     let th = $$('th')
@@ -39,18 +38,18 @@ class SheetColumnHeader extends NodeComponent {
     return th
   }
 
-  getWidth() {
+  getWidth () {
     // HACK: because XML importer does not convert to the right type
     // we need to do it here
-    return Number.parseInt(this.props.node.attr('width'),10) || DEFAULT_COLUMN_WIDTH
+    return Number.parseInt(this.props.node.attr('width'), 10) || DEFAULT_COLUMN_WIDTH
   }
 
-  renderIcon($$, icon) {
+  renderIcon ($$, icon) {
     let iconEl = this.context.iconProvider.renderIcon($$, icon)
     return iconEl
   }
 
-  renderColumnName($$) {
+  renderColumnName ($$) {
     const node = this.props.node
     let name = node.attr('name')
     if (!name) return
@@ -61,7 +60,7 @@ class SheetColumnHeader extends NodeComponent {
     return el
   }
 
-  renderColumnType($$) {
+  renderColumnType ($$) {
     // TODO: here we should discuss how to deal with units
     // we could introduce an extra type for different units
     // but IMO it is semantically more appropriate to have units
@@ -72,7 +71,7 @@ class SheetColumnHeader extends NodeComponent {
     const node = this.props.node
     let coltype = node.attr('type')
 
-    if(!coltype || coltype === 'any') return
+    if (!coltype || coltype === 'any') return
 
     let el = $$('div').addClass('se-column-type').append(
       this.renderIcon($$, coltype + '-cell-type'),
@@ -84,7 +83,7 @@ class SheetColumnHeader extends NodeComponent {
     return el
   }
 
-  _onMouseDown(e) {
+  _onMouseDown (e) {
     e.preventDefault()
     e.stopPropagation()
 
@@ -96,7 +95,7 @@ class SheetColumnHeader extends NodeComponent {
     _window.on('mouseup', this._onMouseUp, this)
   }
 
-  _onMouseMove(e) {
+  _onMouseMove (e) {
     if (this._mouseDown) {
       const width = this._colWidth + (e.pageX - this._startX)
       this.refs.header.css({ width: width })
@@ -105,7 +104,7 @@ class SheetColumnHeader extends NodeComponent {
     }
   }
 
-  _onMouseUp(e) {
+  _onMouseUp (e) {
     this._mouseDown = false
     let _window = DefaultDOMElement.getBrowserWindow()
     _window.off('mousemove', this._onMouseMove, this)

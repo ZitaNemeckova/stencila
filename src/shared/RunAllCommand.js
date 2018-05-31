@@ -1,8 +1,7 @@
 import { Command } from 'substance'
 
 export default class RunAllCommand extends Command {
-
-  getCommandState({ editorSession }) {
+  getCommandState ({ editorSession }) {
     const doc = editorSession.getDocument()
     const autorun = doc.autorun
     return {
@@ -10,7 +9,7 @@ export default class RunAllCommand extends Command {
     }
   }
 
-  execute(params, context) {
+  execute (params, context) {
     const editorSession = params.editorSession
     const engine = context.host.engine
     const doc = editorSession.getDocument()

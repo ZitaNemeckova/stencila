@@ -1,19 +1,19 @@
 import { TextureDocument } from 'substance-texture'
 
-export function getCellState(cell) {
+export function getCellState (cell) {
   // FIXME: we should make sure that cellState is
   // initialized as early as possible
   return cell.state
 }
 
-export function getCellValue(cell) {
+export function getCellValue (cell) {
   if (!cell) return undefined
   if (cell.state) {
     return cell.state.value
   }
 }
 
-export function getCellType(cell) {
+export function getCellType (cell) {
   let type = cell.attr('type')
   if (!type) {
     let doc = cell.getDocument()
@@ -28,7 +28,7 @@ export function getCellType(cell) {
   return type || 'any'
 }
 
-export function _getSourceElement(cellNode) {
+export function _getSourceElement (cellNode) {
   if (cellNode.getDocument() instanceof TextureDocument) {
     // ATTENTION: this caching would be problematic if the cell element
     // was changed structurally, e.g. the <source-code> element replaced.
@@ -41,28 +41,28 @@ export function _getSourceElement(cellNode) {
   return cellNode
 }
 
-export function getSource(cellNode) {
+export function getSource (cellNode) {
   return _getSourceElement(cellNode).textContent
 }
 
-export function setSource(cellNode, newSource) {
+export function setSource (cellNode, newSource) {
   let el = _getSourceElement(cellNode)
   el.text(newSource)
 }
 
-export function getLang(cellNode) {
+export function getLang (cellNode) {
   return _getSourceElement(cellNode).getAttribute('language')
 }
 
-export function getError(cell) {
+export function getError (cell) {
   let cellState = getCellState(cell)
   if (cellState && cellState.errors) {
     return cellState.errors[0]
   }
 }
 
-export function getErrorMessage(error) {
-  switch(error.name) {
+export function getErrorMessage (error) {
+  switch (error.name) {
     case 'unresolved': {
       return 'Unresolved inputs: ' + error.details.unresolved.map(s => {
         return s.origStr || s.name
@@ -89,14 +89,14 @@ export function getErrorMessage(error) {
   }
 }
 
-export function getValue(cell) {
+export function getValue (cell) {
   let cellState = getCellState(cell)
   if (cellState) {
     return cellState.value
   }
 }
 
-export function getFrameSize(layout) {
+export function getFrameSize (layout) {
   // WORKAROUND, this should be solved in libcore functions
   const defaultSizes = {
     'width': '400',

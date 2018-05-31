@@ -2,8 +2,7 @@ import { XMLDocument, uuid } from 'substance'
 import SheetSchema from './SheetSchema'
 
 export default class SheetDocument extends XMLDocument {
-
-  constructor(...args) {
+  constructor (...args) {
     super(...args)
     this.UUID = uuid()
 
@@ -13,23 +12,23 @@ export default class SheetDocument extends XMLDocument {
     this._matrix = null
   }
 
-  getDocTypeParams() {
+  getDocTypeParams () {
     return SheetSchema.getDocTypeParams()
   }
 
-  getXMLSchema() {
+  getXMLSchema () {
     return SheetSchema
   }
 
-  getRootNode() {
+  getRootNode () {
     return this.get('sheet')
   }
 
   // EXPERIMENTAL
-  invert(change) {
+  invert (change) {
     let inverted = change.invert()
     let info = inverted.info || {}
-    switch(change.info.action) {
+    switch (change.info.action) {
       case 'insertRows': {
         info.action = 'deleteRows'
         break
@@ -53,19 +52,19 @@ export default class SheetDocument extends XMLDocument {
     return inverted
   }
 
-  getColumnForCell(cellId) {
+  getColumnForCell (cellId) {
     let cell = this.get(cellId)
     let row = cell.parentNode
     let colIdx = row._childNodes.indexOf(cell.id)
     return this.getColumnMeta(colIdx)
   }
 
-  getColumnMeta(colIdx) {
+  getColumnMeta (colIdx) {
     let columns = this._getColumns()
     return columns.getChildAt(colIdx)
   }
 
-  getCell(rowIdx, colIdx) {
+  getCell (rowIdx, colIdx) {
     const data = this._getData()
     let row = data.getChildAt(rowIdx)
     if (row) {
@@ -74,14 +73,14 @@ export default class SheetDocument extends XMLDocument {
     }
   }
 
-  getCellMatrix() {
+  getCellMatrix () {
     if (!this._matrix) {
       this._matrix = this._getCellMatrix()
     }
     return this._matrix
   }
 
-  getColumnCount() {
+  getColumnCount () {
     const nrows = this.getRowCount()
     if (nrows > 0) {
       const data = this._getData()
@@ -92,12 +91,12 @@ export default class SheetDocument extends XMLDocument {
     }
   }
 
-  getRowCount() {
+  getRowCount () {
     const data = this._getData()
     return data.getChildCount()
   }
 
-  getDimensions() {
+  getDimensions () {
     let matrix = this.getCellMatrix()
     let nrows = matrix.length
     let ncols = 0
@@ -107,7 +106,7 @@ export default class SheetDocument extends XMLDocument {
     return [nrows, ncols]
   }
 
-  _apply(change) {
+  _apply (change) {
     super._apply(change)
     // update the matrix on structural changes
     // TODO: we could be smarter by analysing the change
@@ -124,21 +123,21 @@ export default class SheetDocument extends XMLDocument {
     }
   }
 
-  _getData() {
+  _getData () {
     if (!this._dataNode) {
       this._dataNode = this.get('data')
     }
     return this._dataNode
   }
 
-  _getColumns() {
+  _getColumns () {
     if (!this._columnsNode) {
       this._columnsNode = this.getRootNode().find('columns')
     }
     return this._columnsNode
   }
 
-  _getCellMatrix() {
+  _getCellMatrix () {
     const data = this._getData()
     let matrix = []
     let rows = data.getChildren()

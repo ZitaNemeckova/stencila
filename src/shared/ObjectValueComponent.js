@@ -2,7 +2,7 @@ import { Component } from 'substance'
 
 export default
 class ObjectValueComponent extends Component {
-  render($$) {
+  render ($$) {
     let value = this.props.value
     let el = $$('pre').addClass('sc-object-value')
     let json = JSON.stringify(value.data, null, ' ')
