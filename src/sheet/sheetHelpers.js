@@ -1,5 +1,4 @@
 import { DefaultDOMElement as DOM, isString } from 'substance'
-export { getCellLabel, getColumnIndex, getRowCol, getColumnLabel } from '../shared/cellHelpers'
 
 export function getSelection(editorSession) {
   let sel = editorSession.getSelection()

@@ -69,7 +69,7 @@ export function pack (value) {
 }
 
 /**
- * Unpack a data package into an value
+ * Unpack a data package into a value
  *
  * @memberof value
  * @param {object|string} pkg The package
@@ -116,8 +116,8 @@ export function unpack (pkg) {
 /*
   A helper to gather values of a composite value (object, array, range)
 */
-export function gather(type, value) {
-  switch(type) {
+export function gather (type, value) {
+  switch (type) {
     case 'array': {
       return {
         type: coercedArrayType(value),

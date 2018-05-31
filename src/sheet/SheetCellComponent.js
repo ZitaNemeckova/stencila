@@ -1,6 +1,7 @@
 import { NodeComponent } from 'substance'
+import { isExpression } from 'stencila-engine'
 import ValueComponent from '../shared/ValueComponent'
-import { isExpression, getError, getValue, getErrorMessage } from '../shared/cellHelpers'
+import { getError, getValue, getErrorMessage } from '../shared/cellHelpers'
 
 export default class SheetCellComponent extends NodeComponent {
 

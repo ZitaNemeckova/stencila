@@ -3,12 +3,13 @@ import {
   Toolbar, EditorSession, DOMSelection,
   Configurator, tableHelpers
 } from 'substance'
+import { isExpression } from 'stencila-engine'
 import FormulaBar from './FormulaBar'
 import FormulaEditor from './FormulaEditor'
 import FunctionUsageCommand from '../shared/FunctionUsageCommand'
 import FunctionUsageTool from '../shared/FunctionUsageTool'
 import CodeEditorPackage from '../shared/CodeEditorPackage'
-import { getCellState, isExpression } from '../shared/cellHelpers'
+import { getCellState } from '../shared/cellHelpers'
 import CellRangesOverlay from './CellRangesOverlay'
 
 const { getRowCol, getCellLabel } = tableHelpers

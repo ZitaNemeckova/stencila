@@ -1,5 +1,4 @@
 import { TextureDocument } from 'substance-texture'
-import { engineHelpers } from 'stencila-engine'
 
 export function getCellState(cell) {
   // FIXME: we should make sure that cellState is
@@ -11,9 +10,6 @@ export function getCellValue(cell) {
   if (!cell) return undefined
   if (cell.state) {
     return cell.state.value
-  } else {
-    let preferredType = getCellType(cell)
-    return engineHelpers.valueFromText(cell.text(), preferredType)
   }
 }
 

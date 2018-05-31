@@ -1,7 +1,6 @@
 import { isArray, tableHelpers } from 'substance'
-import { engineHelpers, CellStates } from 'stencila-engine'
+import { parseSymbol, cellStateToString } from 'stencila-engine'
 
-const { parseSymbol } = engineHelpers
 const { getRowCol, getIndexesFromRange, getRangeFromMatrix } = tableHelpers
 
 export function getValue(cell) {
@@ -44,7 +43,7 @@ export function getErrors(cells) {
 
 export function getStates(cells) {
   return cells.map(cell => {
-    return CellStates.toString(cell.status)
+    return cellStateToString(cell.status)
   })
 }
 

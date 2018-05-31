@@ -1,8 +1,8 @@
-import { setupHost, Engine, MiniContext, JsContext } from 'stencila-engine'
-import { libtest } from '../contexts/libtest'
+import { setupContext, Engine, MiniContext, JsContext } from 'stencila-engine'
+import { libtest } from '../libtest'
 
 export default async function setupEngine () {
-  let host = await setupHost({
+  let context = await setupContext({
     contexts: [
       { lang: 'mini', client: MiniContext },
       { lang: 'js', client: JsContext }
@@ -12,7 +12,7 @@ export default async function setupEngine () {
       lib: libtest
     }]
   })
-  let engine = new Engine({ host })
+  let engine = new Engine(context)
   let graph = engine._graph
-  return { engine, host, graph }
+  return { engine, context, graph }
 }

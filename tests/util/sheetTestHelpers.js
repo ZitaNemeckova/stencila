@@ -1,7 +1,7 @@
 import { isArray, tableHelpers } from 'substance'
-import { engineHelpers } from 'stencila-engine'
+import { parseSymbol } from 'stencila-engine'
+import { getSource } from '../../src/shared/cellHelpers'
 
-const { parseSymbol, getSource } = engineHelpers
 const { getRowCol, getIndexesFromRange, getRangeFromMatrix } = tableHelpers
 
 export function setSheetSelection(sheetSession, expr) {

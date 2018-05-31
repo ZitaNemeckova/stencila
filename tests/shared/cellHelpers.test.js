@@ -1,6 +1,6 @@
 import test from 'tape'
 import {
-  getCellState, isExpression, getCellValue, getCellType, valueFromText,
+  getCellState, getCellValue, getCellType,
   getSource, setSource, getError, getErrorMessage
 } from '../../src/shared/cellHelpers'
 import createRawArchive from '../util/createRawArchive'
@@ -16,11 +16,6 @@ test('cellHelpers: getCellState', t => {
   let cellState = getCellState(cell)
   t.ok(Boolean(cellState), 'there should be a cell state')
   t.ok(Boolean(cellState.status), 'cell state should have a status')
-  t.end()
-})
-
-test('cellHelpers: isExpression()', t => {
-  t.ok(isExpression('= foo()'), 'a cell with leading "=" is considered an expression')
   t.end()
 })
 
@@ -46,15 +41,6 @@ test('cellHelpers: getCellType', t => {
     t.deepEqual(getCellType(cells[0][0]), "number", 'getCellType() should provide the correct type')
     t.deepEqual(getCellType(cells[0][1]), "any", 'getCellType() should provide the correct type')
   })
-})
-
-test('cellHelpers: valueFromText', t => {
-  // TODO: add more of thi
-  t.deepEqual(valueFromText('false'), { type: "boolean", data: false }, 'valueFromText should provide a correct unpacked value')
-  t.deepEqual(valueFromText('true'), { type: "boolean", data: true }, 'valueFromText should provide a correct unpacked value')
-  t.deepEqual(valueFromText('1'), { type: "integer", data: 1 }, 'valueFromText should provide a correct unpacked value')
-  t.deepEqual(valueFromText('1.2'), { type: "number", data: 1.2 }, 'valueFromText should provide a correct unpacked value')
-  t.end()
 })
 
 test('cellHelpers: getSource', t => {

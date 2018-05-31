@@ -1,4 +1,4 @@
-import { engineHelpers } from 'stencila-engine'
+import { extractSymbols } from 'stencila-engine'
 import Prism from '../../tmp/prism.js'
 
 const CELL = /\b([a-z0-9_]+[!])?([A-Z]{1,3}[1-9][0-9]*)(?:[:]([A-Z]{1,3}[1-9][0-9]*))?\b/
@@ -110,7 +110,7 @@ export default function analyseCode (code, lang = 'mini') {
   // get tokens from the syntax-highlighter (Prism)
   let tokens = tokenize(code, lang)
   // additionally extract symbols like the engine does
-  let symbols = engineHelpers.extractSymbols(code)
+  let symbols = extractSymbols(code)
 
   let nodes = []
   let calls = []

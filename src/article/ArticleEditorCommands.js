@@ -1,6 +1,6 @@
 import { Command } from 'substance'
 import { InsertNodeCommand } from 'substance-texture'
-import { engineHelpers } from 'stencila-engine'
+import { qualifiedId } from 'stencila-engine'
 import { setCellLanguage, insertCell, insertReproFig } from './ArticleManipulations'
 
 export class SetLanguageCommand extends Command {
@@ -177,7 +177,7 @@ export class RunCellCommand extends Command {
   execute(params, context) {
     const { docId, cellId } = params.commandState
     const engine = context.host.engine
-    const id = engineHelpers.qualifiedId(docId, cellId)
+    const id = qualifiedId(docId, cellId)
     engine._allowRunningCellAndPredecessors(id)
   }
 

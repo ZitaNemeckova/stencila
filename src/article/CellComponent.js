@@ -1,8 +1,8 @@
 import { Component, NodeComponent, isEqual } from 'substance'
+import { OK, BROKEN, FAILED, cellStateToString } from 'stencila-engine'
 import ValueComponent from '../shared/ValueComponent'
 import CodeEditor from '../shared/CodeEditor'
 import { getCellState, getErrorMessage } from '../shared/cellHelpers'
-import { toString as stateToString, OK, BROKEN, FAILED } from '../engine/CellStates'
 import NodeMenu from './NodeMenu'
 
 const LANG_LABELS = {
@@ -12,7 +12,7 @@ const LANG_LABELS = {
   'sql': 'SQL',
   'py': 'Py',
   'pyjp': 'PyJp',
-  'r': 'R',
+  'r': 'R'
 }
 
 const SHOW_ERROR_DELAY = 500
@@ -39,7 +39,7 @@ class CellComponent extends NodeComponent {
 
   _renderStatus($$) {
     const cellState = getCellState(this.props.node)
-    let statusName = cellState ? stateToString(cellState.status) : 'unknown'
+    let statusName = cellState ? cellStateToString(cellState.status) : 'unknown'
     return $$('div').addClass(`se-status sm-${statusName}`)
   }
 

@@ -1,11 +1,7 @@
 import { EventEmitter, uuid } from 'substance'
 import { KJUR } from 'jsrsasign'
-
+import { Engine, JsContext, MiniContext, ContextHttpClient } from 'stencila-engine'
 import FunctionManager from '../function/FunctionManager'
-import Engine from '../engine/Engine'
-import JsContext from '../contexts/JsContext'
-import MiniContext from '../contexts/MiniContext'
-import ContextHttpClient from '../contexts/ContextHttpClient'
 
 /**
  * Each Stencila process has a single instance of the `Host` class which
