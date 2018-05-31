@@ -21,6 +21,7 @@ const BROWSER_EXTERNALS = {
   'substance': 'window.substance',
   'rdc-js': 'window.rdc',
   'substance-texture': 'window.texture',
+  'stencila-engine': 'window.stencilaEngine',
   'stencila-mini': 'window.stencilaMini',
   'stencila-libcore': 'window.stencilaLibcore',
   'katex': 'window.katex',
@@ -36,7 +37,7 @@ const BROWSER_TEST_EXTERNALS = Object.assign({}, BROWSER_EXTERNALS, {
 })
 
 const NODEJS_EXTERNALS = [
-  'substance', 'substance-texture', 'stencila-mini', 'stencila-libcore', 'katex', 'plotly.js', 'rdc-js'
+  'substance', 'substance-texture', 'stencila-engine', 'stencila-mini', 'stencila-libcore', 'katex', 'plotly.js', 'rdc-js'
 ]
 
 const DIST = './dist/'
@@ -171,6 +172,7 @@ function copyAssets() {
   b.copy('./node_modules/plotly.js/dist/plotly*.js*', DIST+'lib/')
   b.copy('./node_modules/substance/dist/substance.js*', DIST+'lib/')
   b.copy('./node_modules/substance-texture/dist/texture.js*', DIST+'lib/')
+  b.copy('./node_modules/stencila-engine/dist/stencila-engine.js*', DIST+'lib/')
   b.copy('./node_modules/stencila-mini/dist/stencila-mini.js*', DIST+'lib/')
   b.copy('./node_modules/stencila-libcore/builds/stencila-envcore.*', DIST+'lib/')
   b.copy('./node_modules/stencila-libcore/builds/stencila-libcore.*', DIST+'lib/')
