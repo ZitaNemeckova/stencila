@@ -21,8 +21,7 @@ export default class Project extends Component {
       'updateDocumentName': this._updateDocumentName,
       'closeContext': this._closeContext,
       'openHelp': this._openHelp,
-      'toggleHelp': this._toggleHelp,
-      'toggleHosts': this._toggleHosts
+      'toggleHelp': this._toggleHelp
     })
 
     if (platform.inBrowser) {
@@ -202,28 +201,6 @@ export default class Project extends Component {
       this._contextId = 'help'
       this._contextProps = { page: 'function/index'}
     }
-    this.refs.contextPane.extendProps({
-      contextId: this._contextId,
-      contextProps: this._contextProps
-    })
-    this.refs.projectBar.extendProps({
-      contextId: this._contextId
-    })
-  }
-
-  /*
-    Either open or hide hosts connection information
-  */
-  _toggleHosts () {
-    let contextId = this._contextId
-    if (contextId === 'hosts') {
-      this._contextId = undefined
-      this._contextProps = undefined
-    } else {
-      this._contextId = 'hosts'
-      this._contextProps = { page: 'hosts' }
-    }
-
     this.refs.contextPane.extendProps({
       contextId: this._contextId,
       contextProps: this._contextProps

@@ -11,7 +11,7 @@ export default class RunAllCommand extends Command {
 
   execute (params, context) {
     const editorSession = params.editorSession
-    const engine = context.host.engine
+    const engine = context.engine
     const doc = editorSession.getDocument()
     engine._allowRunningAllCellsOfDocument(doc.id)
   }

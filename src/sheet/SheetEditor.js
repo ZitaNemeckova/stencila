@@ -100,10 +100,10 @@ export default class SheetEditor extends AbstractEditor {
     const keyboardManager = this.keyboardManager
     const configurator = editorSession.getConfigurator()
     const issueManager = editorSession.getManager('issue-manager')
-    const host = this.context.host
+    const engine = this.context.engine
     return Object.assign({}, super.getChildContext(), {
       configurator,
-      host,
+      engine,
       issueManager,
       keyboardManager
     })

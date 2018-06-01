@@ -1,10 +1,8 @@
 import { Component, FontAwesomeIcon } from 'substance'
 import HelpComponent from '../shared/HelpComponent'
-import HostsComponent from '../host/HostsComponent'
 
 const LABELS = {
-  'help': 'Help',
-  'hosts': 'Hosts'
+  'help': 'Help'
 }
 
 export default class ContextPane extends Component {
@@ -31,10 +29,6 @@ export default class ContextPane extends Component {
     if (this.props.contextId === 'help') {
       el.append(
         $$(HelpComponent, this.props.contextProps)
-      )
-    } else if (this.props.contextId === 'hosts') {
-      el.append(
-        $$(HostsComponent, this.props.contextProps)
       )
     } else {
       el.append(`Unknown context ${this.props.contextId}`)

@@ -35,20 +35,16 @@ export default function StencilaAppMixin (ParentAppChrome) {
       return el
     }
 
-    _setupChildContext () {
+    async _setupChildContext () {
       return setupStencilaContext()
-    }
-
-    _initContext (context) {
-      return context.host.initialize()
     }
 
     _getArchiveClass () {
       return StencilaArchive
     }
 
-    _initArchive (archive, context) {
-      const engine = context.host && context.host.engine
+    async _initArchive (archive, context) {
+      const engine = context.engine
       if (engine) {
         // when a document is renamed, transclusions must be updated
         _listenForDocumentRecordUpdates(archive, engine)
@@ -60,7 +56,12 @@ export default function StencilaAppMixin (ParentAppChrome) {
           _connectDocumentToEngine(engine, archive, entry.id)
         })
       }
-      return Promise.resolve(archive)
+      return archive
+    }
+
+    _afterInit () {
+      const engine = this._childContext.engine
+      engine.runForEver(10)
     }
   }
 }

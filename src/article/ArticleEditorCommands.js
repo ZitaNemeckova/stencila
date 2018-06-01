@@ -166,7 +166,7 @@ export class RunCellCommand extends Command {
 
   execute (params, context) {
     const { docId, cellId } = params.commandState
-    const engine = context.host.engine
+    const engine = context.engine
     const id = qualifiedId(docId, cellId)
     engine._allowRunningCellAndPredecessors(id)
   }

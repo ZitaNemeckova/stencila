@@ -43,10 +43,12 @@
     "lodash": "^4.17.4",
     "lodash.throttle": "^4.1.1",
     "plotly.js": "^1.31.1",
+    "stencila-engine": "file:../engine",
     "stencila-libcore": "^0.2.13",
+    "stencila-js": "file:../js",
     "stencila-mini": "^0.14.2",
     "substance": "1.0.0-preview.65",
-    "substance-texture": "1.0.0-preview.3-preview.1",
+    "substance-texture": "file:../../substance/texture",
     "timeago.js": "3.0.0",
     "xmlhttprequest": "^1.8.0"
   },

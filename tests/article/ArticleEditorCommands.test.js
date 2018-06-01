@@ -100,12 +100,11 @@ function sample() {
 }
 
 function _setup(archiveData, withEngine) {
-  let host
   let engine
   let context = {}
   if (withEngine) {
-    ({host, engine} = setupEngine())
-    context.host = host
+    ({engine} = setupEngine())
+    context.engine = engine
   }
   let rawArchive = createRawArchive(archiveData)
   let archive = loadRawArchive(rawArchive, context)

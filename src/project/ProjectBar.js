@@ -34,11 +34,6 @@ export default class ProjectBar extends Component {
         action: 'toggleHelp',
         icon: 'fa-question-circle',
         active: contextId === 'help'
-      }),
-      $$(ContextToggle, {
-        action: 'toggleHosts',
-        icon: 'fa-server',
-        active: contextId === 'hosts'
       })
     )
 

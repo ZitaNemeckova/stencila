@@ -157,11 +157,9 @@ function sheetAndArticle() {
 
 function _setup(archiveData) {
   archiveData = archiveData || sample()
-  let host
-  let engine
   let context = {}
-  ;({host, engine} = setupEngine())
-  context.host = host
+  let {engine} = setupEngine()
+  context.engine = engine
   let rawArchive = createRawArchive(archiveData)
   let archive = loadRawArchive(rawArchive, context)
   return { archive, engine }

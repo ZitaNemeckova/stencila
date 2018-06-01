@@ -1,23 +1,43 @@
-import { getQueryStringParam } from 'substance'
-import Host from './host/Host'
+import { Engine, MiniContext, setupContext } from 'stencila-engine'
+import { JavascriptContext } from 'stencila-js'
+import libcore from 'stencila-libcore'
+export default async function setupStencilaContext () {
+  // Note: I have removed all Host for now
+  // I am in favor of moving these things into stencila-node
+  // and add a light-weight HostClient for configuration
 
-export default function setupStencilaContext () {
-  // Stencila hosts (for requesting external execution contexts etc)
-  let hosts = []
-  // Use the origin as a remote Stencila Host?
-  if (window.STENCILA_ORIGIN_HOST) {
-    hosts.push(window.location.origin)
-  }
-  // List of any other remote Stencila Hosts
-  // Deprecated `peers` configuration option (hosts seems like a less confusing name)
-  const hostsExtra = (
-    getQueryStringParam('hosts') || window.STENCILA_HOSTS ||
-    getQueryStringParam('peers') || window.STENCILA_PEERS
-  )
-  if (hostsExtra) hosts = hosts.concat(hostsExtra.split(','))
-  // Try to discover hosts on http://127.0.0.1?
-  const discover = parseFloat(getQueryStringParam('discover') || window.STENCILA_DISCOVER || '-1')
-  // Instantiate and initialise the host
-  const host = new Host({ hosts, discover })
-  return { host }
+  let context = await setupContext({
+    contexts: [
+      { id: 'mickey', lang: 'mini', client: MiniContext },
+      { id: 'goofy', lang: 'js', client: JavascriptContext }
+    ],
+    libraries: [
+      { lang: 'js', lib: libcore }
+    ]
+  })
+  let engine = new Engine(context)
+
+  // EXPERIMENTAL: register all library content as globals
+  // TODO: this needs to be done automatically
+  // as an initialization step
+  let jsContext = context.getLanguageContext('js')
+  let names = Object.keys(libcore.funcs)
+  names.forEach(name => {
+    // TODO: do we want that extra level here?
+    // need to discuss if the function type could
+    // be simplified
+    engine._addGlobal(name, {
+      type: 'function',
+      value: {
+        type: 'function',
+        data: {
+          name,
+          library: libcore.name,
+          context: jsContext.id
+        }
+      }
+    })
+  })
+
+  return { engine }
 }
