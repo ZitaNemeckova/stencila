@@ -4,7 +4,7 @@ import {
 import SheetColumnHeader from './SheetColumnHeader'
 import SheetRowHeader from './SheetRowHeader'
 import SheetCellComponent from './SheetCellComponent'
-import getBoundingRect from '../util/getBoundingRect'
+import getBoundingRect from './getBoundingRect'
 
 /*
  This Component renders a part of a sheet which is defined
