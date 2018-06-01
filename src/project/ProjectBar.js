@@ -2,7 +2,6 @@ import { Component } from 'substance'
 import ProjectTab from './ProjectTab'
 import AddProjectTab from './AddProjectTab'
 import ContextToggle from './ContextToggle'
-import documentTypes from '../documentTypes'
 
 export default class ProjectBar extends Component {
   render ($$) {
@@ -52,6 +51,13 @@ export default class ProjectBar extends Component {
   }
 }
 
+// TODO: this needs to be done in a different way
+// we should still show tabs, but render them in a raw way (without editing)
+const supportedDocumentTypes = {
+  'article': 'Article',
+  'sheet': 'Sheet'
+}
+
 function _isVisible (entry) {
-  return Boolean(documentTypes[entry.type])
+  return Boolean(supportedDocumentTypes[entry.type])
 }
