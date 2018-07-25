@@ -1,36 +1,8 @@
 import { WebAppChrome } from 'substance-texture'
-import StencilaArchive from './StencilaArchive'
+import StencilaAppMixin from './StencilaAppMixin'
 
-import {
-  _renderStencilaApp,
-  _setupStencilaChildContext,
-  _initStencilaContext,
-  _initStencilaArchive
-} from './stencilaAppHelpers'
-
-export default class StencilaWebApp extends WebAppChrome {
-
-  render($$) {
-    return _renderStencilaApp($$, this)
-  }
-
-  _setupChildContext() {
-    return _setupStencilaChildContext(this.context)
-  }
-
-  _initContext(context) {
-    return _initStencilaContext(context)
-  }
-
-  _getArchiveClass() {
-    return StencilaArchive
-  }
-
-  _getDefaultDataFolder() {
+export default class StencilaWebApp extends StencilaAppMixin(WebAppChrome) {
+  _getDefaultDataFolder () {
     return './examples/'
-  }
-
-  _initArchive(archive, context) {
-    return _initStencilaArchive(archive, context)
   }
 }

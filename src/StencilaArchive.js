@@ -1,24 +1,36 @@
 import { prettyPrintXML } from 'substance'
-import { JATSExporter, TextureArchive } from 'substance-texture'
+import { TextureArchive } from 'substance-texture'
 import ArticleLoader from './article/ArticleLoader'
 import SheetLoader from './sheet/SheetLoader'
 
-export default class StencilaArchive extends TextureArchive {
+// Note: this is overidden to
+// 1. extend TextureArchive with the 'sheet' document type
+// 2. add sanitization for name collisions
+// 3. allow to pass down a customized context to the loaders
+// -> 2. and 3. should be added to the general implementation
+// -> 1. should be solved using configuration
 
-  constructor(storage, buffer, context) {
+export default class StencilaArchive extends TextureArchive {
+  constructor (storage, buffer, context) {
     super(storage, buffer)
+
     this._context = context
   }
 
-  load(archiveId) {
+  load (archiveId) {
     return super.load(archiveId)
+      // TODO: this should probably be done in Texture as well
+      // so we should add this to general DAR sanitizations
       .then(() => {
         this._fixNameCollisions()
         return this
       })
   }
 
-  _loadDocument(type, record, sessions) {
+  // This is overridden because TextureArchive is lacking support
+  // for providing a custom context to the loader
+  // TODO: this should be possible in the general implementation
+  _loadDocument (type, record, sessions) {
     let context = this._context
     let editorSession
     switch (type) {
@@ -42,7 +54,8 @@ export default class StencilaArchive extends TextureArchive {
     return editorSession
   }
 
-  _fixNameCollisions() {
+  // TODO: this should go into general implementation
+  _fixNameCollisions () {
     let manifestSession = this._sessions['manifest']
     let entries = manifestSession.getDocument().getDocumentEntries()
     // TODO: this should also be done in DAR in general
@@ -63,51 +76,33 @@ export default class StencilaArchive extends TextureArchive {
     })
   }
 
-  _exportDocument(type, session, sessions) {
+  _exportDocument (type, session, sessions) {
     switch (type) {
-      case 'article': {
-        // FIXME: hard-coded, and thus bad
-        // TODO: export only those resources which have been changed
-        // Also we need to
-        let jatsExporter = new JATSExporter()
-        let pubMetaDb = sessions['pub-meta'].getDocument()
-        let doc = session.getDocument()
-        let dom = doc.toXML()
-        let res = jatsExporter.export(dom, { pubMetaDb, doc })
-        console.info('saving jats', res.dom.getNativeElement())
-        // TODO: bring back pretty printing (currently messes up CDATA content)
-        let xmlStr = prettyPrintXML(res.dom)
-        //let xmlStr = res.dom.serialize()
-        return xmlStr
-      }
       case 'sheet': {
         let dom = session.getDocument().toXML()
         let xmlStr = prettyPrintXML(dom)
         return xmlStr
       }
       default:
-        throw new Error('Unsupported document type')
+        return super._exportDocument(type, session, sessions)
     }
   }
 
   /*
     We use the name of the first document
+    TODO: This is questionable. Because this is very implicit.
+    This should be solved on DAR level, i.e. there should
+    be a title on the DAR itself, whatever we do then to edit this.
   */
-  getTitle() {
+  getTitle () {
     let entries = this.getDocumentEntries()
     let firstEntry = entries[0]
     return firstEntry.name || firstEntry.id
   }
 
-  getDocumentType(documentId) {
-    let editorSession = this.getEditorSession(documentId)
-    let doc = editorSession.getDocument()
-    return doc.documentType
-  }
-
+  // TODO: this should go into PersistedDocumentArchive
   // added `info.action = 'addDocument'`
-  // TODO: this should go into substance.PersistedDocumentArchive
-  _addDocumentRecord(documentId, type, name, path) {
+  _addDocumentRecord (documentId, type, name, path) {
     this._sessions.manifest.transaction(tx => {
       let documents = tx.find('documents')
       let docEntry = tx.createElement('document', { id: documentId }).attr({
@@ -119,9 +114,9 @@ export default class StencilaArchive extends TextureArchive {
     }, { action: 'addDocument' })
   }
 
+  // TODO: this should go into PersistedDocumentArchive
   // added `info.action = 'renameDocument'`
-  // TODO: this should go into substance.PersistedDocumentArchive
-  renameDocument(documentId, name) {
+  renameDocument (documentId, name) {
     this._sessions.manifest.transaction(tx => {
       let docEntry = tx.find(`#${documentId}`)
       docEntry.attr({name})
