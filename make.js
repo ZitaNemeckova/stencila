@@ -1,7 +1,6 @@
 /* globals __dirname, process */
 const b = require('substance-bundler')
 const fork = require('substance-bundler/extensions/fork')
-const install = require('substance-bundler/extensions/install')
 const path = require('path')
 const fs = require('fs')
 const merge = require('lodash.merge')
@@ -21,6 +20,8 @@ const BROWSER_EXTERNALS = {
   'substance': 'window.substance',
   'rdc-js': 'window.rdc',
   'substance-texture': 'window.texture',
+  'stencila-engine': 'window.stencilaEngine',
+  'stencila-js': 'window.stencilaJs',
   'stencila-mini': 'window.stencilaMini',
   'stencila-libcore': 'window.stencilaLibcore',
   'katex': 'window.katex',
@@ -36,7 +37,9 @@ const BROWSER_TEST_EXTERNALS = Object.assign({}, BROWSER_EXTERNALS, {
 })
 
 const NODEJS_EXTERNALS = [
-  'substance', 'substance-texture', 'stencila-mini', 'stencila-libcore', 'katex', 'plotly.js', 'rdc-js'
+  'substance', 'substance-texture', 'stencila-engine',
+  'stencila-js', 'stencila-mini', 'stencila-libcore',
+  'katex', 'plotly.js', 'rdc-js'
 ]
 
 const DIST = './dist/'
@@ -291,36 +294,6 @@ function buildSingleTest(testFile) {
     ignore: NODEJS_IGNORE
   }))
   return dest
-}
-
-// this is not run all the time
-// we use it to pre-bundle vendor libraries,
-// to speed up bundling within this project
-// and to work around problems with using rollup on these projects
-function buildVendor() {
-  install(b, 'browserify', '^14.1.0')
-  install(b, 'uglify-js-harmony', '^2.7.5')
-}
-
-function minifiedVendor(src, name, opts = {}) {
-  let tmp = `./vendor/${name}.js`
-  let _opts = Object.assign({
-    dest: tmp,
-    debug: false
-  })
-  if (opts.exports) {
-    _opts.exports = opts.exports
-  }
-  if (opts.standalone) {
-    _opts.browserify = { standalone: name }
-  }
-  b.browserify(src, _opts)
-  if (opts.minify !== false) {
-    b.minify(tmp, {
-      debug: false
-    })
-    b.rm(tmp)
-  }
 }
 
 function bundlePrism() {
