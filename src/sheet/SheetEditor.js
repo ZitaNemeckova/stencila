@@ -1,20 +1,21 @@
 import {
   platform, DefaultDOMElement, AbstractEditor,
   Toolbar, EditorSession, DOMSelection,
-  Configurator
+  Configurator, tableHelpers
 } from 'substance'
+import { isExpression } from 'stencila-engine'
 import FormulaBar from './FormulaBar'
 import FormulaEditor from './FormulaEditor'
 import FunctionUsageCommand from '../shared/FunctionUsageCommand'
 import FunctionUsageTool from '../shared/FunctionUsageTool'
 import CodeEditorPackage from '../shared/CodeEditorPackage'
-import { getCellLabel } from './sheetHelpers'
-import { getRowCol, getCellState, isExpression} from '../shared/cellHelpers'
+import { getCellState } from '../shared/cellHelpers'
 import CellRangesOverlay from './CellRangesOverlay'
 
-export default class SheetEditor extends AbstractEditor {
+const { getRowCol, getCellLabel } = tableHelpers
 
-  _initialize(props) {
+export default class SheetEditor extends AbstractEditor {
+  _initialize (props) {
     super._initialize(props)
 
     // a context for FormulaBar and FormulaEditor

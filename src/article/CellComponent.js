@@ -1,8 +1,8 @@
 import { Component, NodeComponent, isEqual } from 'substance'
+import { OK, BROKEN, FAILED, cellStateToString } from 'stencila-engine'
 import ValueComponent from '../shared/ValueComponent'
 import CodeEditor from '../shared/CodeEditor'
 import { getCellState, getErrorMessage } from '../shared/cellHelpers'
-import { toString as stateToString, OK, BROKEN, FAILED } from '../engine/CellStates'
 import NodeMenu from './NodeMenu'
 
 const LANG_LABELS = {

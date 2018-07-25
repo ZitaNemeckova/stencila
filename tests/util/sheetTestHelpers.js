@@ -1,6 +1,8 @@
-import { isArray } from 'substance'
-import { getRowCol, getSource, getIndexesFromRange, getRangeFromMatrix } from '../../src/shared/cellHelpers'
-import { parseSymbol } from '../../src/shared/expressionHelpers'
+import { isArray, tableHelpers } from 'substance'
+import { parseSymbol } from 'stencila-engine'
+import { getSource } from '../../src/shared/cellHelpers'
+
+const { getRowCol, getIndexesFromRange, getRangeFromMatrix } = tableHelpers
 
 export function setSheetSelection(sheetSession, expr) {
   let { anchorRow, anchorCol, focusRow, focusCol } = _getCoordinatesFromExpr(expr)

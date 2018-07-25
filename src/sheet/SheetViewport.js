@@ -1,5 +1,5 @@
 import { EventEmitter } from 'substance'
-import getBoundingRect from '../util/getBoundingRect'
+import getBoundingRect from './getBoundingRect'
 
 export default class SheetViewport extends EventEmitter {
 

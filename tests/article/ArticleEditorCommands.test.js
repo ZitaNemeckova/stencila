@@ -5,8 +5,7 @@ import createRawArchive from '../util/createRawArchive'
 import loadRawArchive from '../util/loadRawArchive'
 import setupEngine from '../util/setupEngine'
 import { play } from '../util/engineTestHelpers'
-import { _reset_rand } from '../contexts/libtest'
-
+import { _resetRand } from '../libtest'
 
 test('ArticleEditorCommands: RunCellCommand.getCommandState()', t => {
   let { archive } = _setup(sample())
@@ -61,7 +60,7 @@ test('ArticleEditorCommands: RunCellCommand.getCommandState()', t => {
 
 test('ArticleEditorCommands: RunCellCommand.execute()', t => {
   t.plan(1)
-  _reset_rand()
+  _resetRand()
   let { archive, engine } = _setup(sample(), true)
   let editorSession = archive.getEditorSession('article')
   let article = editorSession.getDocument()
@@ -94,19 +93,18 @@ function sample() {
       body: [
         "<p id='p1'>...</p>",
         "<cell id='cell1' language='mini'>rand()</cell>",
-        "<p id='p2'>...</p>",
+        "<p id='p2'>...</p>"
       ]
     }
   ]
 }
 
 function _setup(archiveData, withEngine) {
-  let host
   let engine
   let context = {}
   if (withEngine) {
-    ({host, engine} = setupEngine())
-    context.host = host
+    ({engine} = setupEngine())
+    context.engine = engine
   }
   let rawArchive = createRawArchive(archiveData)
   let archive = loadRawArchive(rawArchive, context)

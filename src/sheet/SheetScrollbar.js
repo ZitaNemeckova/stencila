@@ -1,8 +1,8 @@
 import {
   DefaultDOMElement, Component,
-  platform,
+  platform
 } from 'substance'
-import getBoundingRect from '../util/getBoundingRect'
+import getBoundingRect from './getBoundingRect'
 
 export default class SheetScrollbar extends Component {
 

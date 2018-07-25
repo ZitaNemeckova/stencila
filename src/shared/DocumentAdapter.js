@@ -1,5 +1,6 @@
 import { uuid, DocumentChange } from 'substance'
-import { qualifiedId, setSource } from './cellHelpers'
+import { qualifiedId } from 'stencila-engine'
+import { setSource } from './cellHelpers'
 
 /*
   Base-Class for adapters between document and engine.

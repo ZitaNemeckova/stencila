@@ -1,13 +1,13 @@
 import {
-  DefaultDOMElement, platform
+  DefaultDOMElement, platform, tableHelpers
 } from 'substance'
 import { getSelection, getRange } from './sheetHelpers'
 import { setValues, clearValues } from './SheetManipulations'
-import { getRangeFromMatrix } from '../shared/cellHelpers'
+
+const { getRangeFromMatrix } = tableHelpers
 
 export default class SheetClipboard {
-
-  constructor(editorSession) {
+  constructor (editorSession) {
     this.editorSession = editorSession
   }
 

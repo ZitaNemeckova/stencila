@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 import {
   EditorPackage as TextureEditorPackage
 } from 'substance-texture'

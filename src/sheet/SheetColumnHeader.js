@@ -1,6 +1,7 @@
-import { DefaultDOMElement, NodeComponent, Tooltip } from 'substance'
-import { getColumnLabel } from './sheetHelpers'
+import { DefaultDOMElement, NodeComponent, Tooltip, tableHelpers } from 'substance'
+
 const DEFAULT_COLUMN_WIDTH = 100
+const getColumnLabel = tableHelpers.getColumnLabel
 
 class SheetColumnHeader extends NodeComponent {
 
