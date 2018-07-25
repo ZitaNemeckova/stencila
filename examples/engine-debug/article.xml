@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "TextureArticle 0.1.0" "http://substance.io/TextureArticle-1.0.0.dtd">
+<article id="article" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <front id="front-1">
+    <article-meta id="article-meta-1">
+      <title-group id="title-group-1">
+        <article-title id="article-title-1">Engine - Debug</article-title>
+      </title-group>
+      <history id="history-1" />
+      <abstract id="abstract-1">
+        <p id="p-1" />
+      </abstract>
+    </article-meta>
+  </front>
+  <body id="body-1">
+    <code id="cell-88318f586c23732fc7959c4643b17618" specific-use="cell">
+      <named-content>
+        <alternatives>
+          <code specific-use="source" language="mini"><![CDATA[x = [1,2,3]]]></code>
+          <code specific-use="output" language="json"><![CDATA[{"type":"array[integer]","data":[1,2,3]}]]></code>
+        </alternatives>
+      </named-content>
+    </code>
+    <code id="cell-5891eb4dccee45ef34db66ed8c566e59" specific-use="cell">
+      <named-content>
+        <alternatives>
+          <code specific-use="source" language="mini"><![CDATA[y = [2,10,3]]]></code>
+          <code specific-use="output" language="json"><![CDATA[{"type":"array[integer]","data":[2,10,3]}]]></code>
+        </alternatives>
+      </named-content>
+    </code>
+    <code id="cell-2dd41127acaa37de57eb63485b57d2c7" specific-use="cell">
+      <named-content>
+        <alternatives>
+          <code specific-use="source" language="mini"><![CDATA[plotly([
+  { x: x, y: y, mode: 'markers', name: 'foo' }
+], {
+  xaxis: { title: 'X' },
+  yaxis: { title: 'Y' }
+})]]></code>
+          <code specific-use="output" language="json"><![CDATA[{"type":"plotly","data":{"type":"plotly","traces":[{"x":[1,2,3],"y":[2,10,3],"mode":"markers","name":"foo"}],"layout":{"xaxis":{"title":"X","linecolor":"black","linewidth":1,"mirror":true,"ticks":"outside","showspikes":false,"type":"linear","range":[0.8571428571428572,3.142857142857143],"autorange":true},"yaxis":{"title":"Y","linecolor":"black","linewidth":1,"mirror":true,"ticks":"outside","showspikes":false,"type":"linear","range":[1.4327808471454881,10.567219152854513],"autorange":true},"margin":{"l":50,"r":50,"t":40,"b":50},"width":"400","height":"400"}}}]]></code>
+        </alternatives>
+      </named-content>
+    </code>
+  </body>
+  <back id="back-1">
+    <ref-list id="ref-list-1" />
+  </back>
+</article>

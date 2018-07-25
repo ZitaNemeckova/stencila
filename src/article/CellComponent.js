@@ -39,7 +39,7 @@ class CellComponent extends NodeComponent {
 
   _renderStatus($$) {
     const cellState = getCellState(this.props.node)
-    let statusName = cellState ? stateToString(cellState.status) : 'unknown'
+    let statusName = cellState ? cellStateToString(cellState.status) : 'unknown'
     return $$('div').addClass(`se-status sm-${statusName}`)
   }
 

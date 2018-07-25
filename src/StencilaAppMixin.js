@@ -35,7 +35,7 @@ export default function StencilaAppMixin (ParentAppChrome) {
       return el
     }
 
-    async _setupChildContext () {
+    _setupChildContext () {
       return setupStencilaContext()
     }
 
@@ -59,10 +59,13 @@ export default function StencilaAppMixin (ParentAppChrome) {
       return archive
     }
 
-    _afterInit () {
-      const engine = this._childContext.engine
-      engine.runForEver(10)
+    willUpdateState (newState) {
+      if (newState.archive) {
+        const engine = this._childContext.engine
+        engine.runForEver(10)
+      }
     }
+
   }
 }
 

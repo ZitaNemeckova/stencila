@@ -313,7 +313,7 @@ export default class SheetEditor extends AbstractEditor {
       commandManager: editorSession.commandManager,
       commandGroups: configurator.getCommandGroups(),
       tools: configurator.getTools(),
-      functionManager: this.context.host.functionManager
+      functionManager: this.context.functionManager
     }
   }
 

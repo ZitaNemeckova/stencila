@@ -16,7 +16,7 @@ import { Component } from 'substance'
 
 export default class FunctionHelpComponent extends Component {
   render($$) {
-    const functionManager = this.context.host.functionManager
+    const functionManager = this.context.functionManager
     const func = functionManager.getFunction(this.props.functionName)
 
     let el = $$('div').addClass('sc-function-help')
@@ -27,11 +27,11 @@ export default class FunctionHelpComponent extends Component {
         $$('div').addClass('se-description').append(func.description)
       )
 
-      // TODO: Currently only using the first method, allow for 
+      // TODO: Currently only using the first method, allow for
       // multiple methods (ie. overloads with different parameter types)
       let method = Object.values(func.methods)[0]
       let params = method.params
-      
+
       let syntaxEl = $$('div').addClass('se-syntax').append(
         $$('span').addClass('se-name').append(func.name),
         '('

@@ -2,11 +2,9 @@ import { Component } from 'substance'
 import ProjectTab from './ProjectTab'
 import AddProjectTab from './AddProjectTab'
 import ContextToggle from './ContextToggle'
-import documentTypes from '../documentTypes'
 
 export default class ProjectBar extends Component {
-
-  render($$) {
+  render ($$) {
     const archive = this.props.archive
     const documentEntries = archive.getDocumentEntries()
     let contextId = this.props.contextId
@@ -36,11 +34,6 @@ export default class ProjectBar extends Component {
         action: 'toggleHelp',
         icon: 'fa-question-circle',
         active: contextId === 'help'
-      }),
-      $$(ContextToggle, {
-        action: 'toggleHosts',
-        icon: 'fa-server',
-        active: contextId === 'hosts'
       })
     )
 
@@ -51,9 +44,15 @@ export default class ProjectBar extends Component {
 
     return el
   }
-
 }
 
-function _isVisible(entry) {
-  return Boolean(documentTypes[entry.type])
+// TODO: this needs to be done in a different way
+// we should still show tabs, but render them in a raw way (without editing)
+const supportedDocumentTypes = {
+  'article': 'Article',
+  'sheet': 'Sheet'
+}
+
+function _isVisible (entry) {
+  return Boolean(supportedDocumentTypes[entry.type])
 }

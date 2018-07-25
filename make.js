@@ -22,7 +22,6 @@ const BROWSER_EXTERNALS = {
   'substance-texture': 'window.texture',
   'stencila-engine': 'window.stencilaEngine',
   'stencila-js': 'window.stencilaJs',
-  'stencila-mini': 'window.stencilaMini',
   'stencila-libcore': 'window.stencilaLibcore',
   'katex': 'window.katex',
   'plotly.js': 'window.Plotly'
@@ -37,8 +36,8 @@ const BROWSER_TEST_EXTERNALS = Object.assign({}, BROWSER_EXTERNALS, {
 })
 
 const NODEJS_EXTERNALS = [
-  'substance', 'substance-texture', 'stencila-engine',
-  'stencila-js', 'stencila-mini', 'stencila-libcore',
+  'substance', 'substance-texture',
+  'stencila-engine', 'stencila-js', 'stencila-libcore',
   'katex', 'plotly.js', 'rdc-js'
 ]
 
@@ -83,10 +82,6 @@ b.task('clean', () => {
   b.rm(DIST)
   b.rm('tmp')
 })
-
-// This is used to generate the files in ./vendor/
-b.task('vendor', buildVendor)
-.describe('Creates pre-bundled files in vendor/.')
 
 b.task('assets', () => {
   copyAssets()
@@ -174,7 +169,8 @@ function copyAssets() {
   b.copy('./node_modules/plotly.js/dist/plotly*.js*', DIST+'lib/')
   b.copy('./node_modules/substance/dist/substance.js*', DIST+'lib/')
   b.copy('./node_modules/substance-texture/dist/texture.js*', DIST+'lib/')
-  b.copy('./node_modules/stencila-mini/dist/stencila-mini.js*', DIST+'lib/')
+  b.copy('./node_modules/stencila-engine/dist/stencila-engine.js*', DIST+'lib/')
+  b.copy('./node_modules/stencila-js/dist/stencila-js.js*', DIST+'lib/')
   b.copy('./node_modules/stencila-libcore/builds/stencila-envcore.*', DIST+'lib/')
   b.copy('./node_modules/stencila-libcore/builds/stencila-libcore.*', DIST+'lib/')
   b.copy('./node_modules/rdc-js/dist/rdc.js*', DIST+'lib/')
