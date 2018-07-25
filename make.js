@@ -188,17 +188,22 @@ function buildCss() {
 
 function buildStencilaBrowser() {
   b.js('index.es.js', COMMON_SETTINGS({
-    dest: DIST+'stencila.js',
-    format: 'umd', moduleName: 'stencila',
-    globals: BROWSER_EXTERNALS,
+    output: [{
+      file: DIST + 'stencila.js',
+      format: 'umd',
+      name: 'stencila',
+      globals: BROWSER_EXTERNALS
+    }],
     external: NODEJS_EXTERNALS
   }))
 }
 
 function buildStencilaNodeJS() {
   b.js('index.es.js', COMMON_SETTINGS({
-    dest : DIST+'stencila.cjs.js',
-    format: 'cjs',
+    output: [{
+      file: DIST + 'stencila.cjs.js',
+      format: 'cjs'
+    }],
     // Externals are not included into the bundle
     external: NODEJS_EXTERNALS,
     ignore: NODEJS_IGNORE
@@ -211,9 +216,13 @@ function buildApp() {
   // copy('./node_modules/substance/packages/** /*.css', 'dist/styles/', { root: './node_modules/substance/'})
 
   b.js(`./app/app.js`, {
-    dest: `${DIST}app.js`,
-    format: 'umd', moduleName: `StencilaExample`,
-    external: EXAMPLE_EXTERNALS
+    output: [{
+      file: `${DIST}app.js`,
+      format: 'umd',
+      name: `stencilaExample`,
+      globals: EXAMPLE_EXTERNALS
+    }],
+    external: Object.keys(EXAMPLE_EXTERNALS)
   })
 }
 
@@ -252,17 +261,21 @@ function buildEnv() {
 
 function buildBrowserTests() {
   b.js('tests/**/*.test.js', COMMON_SETTINGS({
-    dest: 'tmp/tests.js',
-    format: 'umd',
-    moduleName: 'tests',
+    output: [{
+      file: 'tmp/tests.js',
+      format: 'umd',
+      name: 'tests'
+    }],
     external: BROWSER_TEST_EXTERNALS
   }))
 }
 
 function buildNodeJSTests() {
   b.js('tests/**/*.test.js', COMMON_SETTINGS({
-    dest: 'tmp/tests.cjs.js',
-    format: 'cjs',
+    output: [{
+      file: 'tmp/tests.cjs.js',
+      format: 'cjs'
+    }],
     external: NODEJS_TEST_EXTERNALS,
     ignore: NODEJS_IGNORE
   }))
@@ -273,8 +286,10 @@ function buildInstrumentedTests() {
   // right now we only see the coverage on the files which
   // are actually imported by tests.
   b.js(['index.es.js', 'tests/**/*.test.js'], COMMON_SETTINGS({
-    dest: 'tmp/tests.cov.js',
-    format: 'cjs',
+    output: [{
+      file: 'tmp/tests.cov.js',
+      format: 'cjs'
+    }],
     istanbul: {
       include: ['src/**/*.js'],
       exclude:[]
@@ -288,8 +303,10 @@ function buildInstrumentedTests() {
 function buildSingleTest(testFile) {
   const dest = path.join(__dirname, 'tmp', testFile)
   b.js(testFile, COMMON_SETTINGS({
-    dest: dest,
-    format: 'cjs',
+    output: [{
+      file: dest,
+      format: 'cjs'
+    }],
     external: NODEJS_TEST_EXTERNALS,
     ignore: NODEJS_IGNORE
   }))
